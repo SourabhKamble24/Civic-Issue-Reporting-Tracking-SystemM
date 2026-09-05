@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Infrastructure Map - CivicAI</title>
+  <link rel="stylesheet" href="./src/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <style>
+    /* Drawer animation */
+    #issue-drawer {
+      transition: transform 0.3s ease-in-out;
+    }
+    .drawer-open {
+      transform: translateX(0);
+    }
+    .drawer-closed {
+      transform: translateX(100%);
+    }
+    /* Mobile filter panel overlay */
+    @media (max-width: 768px) {
+      #filter-panel {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 40;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+      }
+      #filter-panel.filter-open {
+        transform: translateX(0);
+      }
+      #issue-drawer {
+        width: 100%;
+      }
+    }
+    /* Custom Map Controls */
+    .leaflet-control-zoom {
+      border: none !important;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+      border-radius: 8px !important;
+      overflow: hidden;
+    }
+    .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+      color: #0f172a !important;
+      background-color: white !important;
+    }
+    .leaflet-control-zoom-in:hover, .leaflet-control-zoom-out:hover {
+      background-color: #f1f5f9 !important;
+      color: #0284c7 !important;
+    }
+    /* Marker Popup Styling */
+    .leaflet-popup-content-wrapper {
+      border-radius: 12px;
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      border: 1px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body class="bg-surface text-navy h-screen flex flex-col font-sans antialiased overflow-hidden">
+  
+  <div id="navbar-container" class="shrink-0"></div>
+
+  <main class="flex-grow flex relative overflow-hidden w-full h-full">
+    
+    <!-- Mobile Filter Toggle -->
+    <button id="mobile-filter-btn" class="md:hidden absolute top-4 left-4 z-30 bg-white p-3 rounded-full shadow-lg text-navy border border-surface-border flex items-center justify-center">
+      <span class="material-symbols-outlined">filter_list</span>
+    </button>
+
+    <!-- LEFT PANEL: Filters -->
+    <aside id="filter-panel" class="w-80 bg-white border-r border-surface-border flex flex-col z-10 shadow-sm shrink-0 h-full overflow-y-auto">
+      <div class="p-5 border-b border-surface-border bg-slate-50 flex justify-between items-center">
+        <h2 class="text-lg font-bold text-navy flex items-center gap-2">
+          <span class="material-symbols-outlined text-action">tune</span> Filters
+        </h2>
+        <button id="close-filter-btn" class="md:hidden text-slate-400 hover:text-navy">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-8 flex-grow">
+        <!-- Search -->
+        <div>
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Search Issues</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+            <input type="text" id="filter-search" class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-action focus:border-transparent outline-none" placeholder="ID, location, keyword...">
+          </div>
+        </div>
+
+        <!-- Priority Filters -->
+        <div>
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">Priority Level</label>
+          <div class="space-y-3">
+            <label class="flex items-center group cursor-pointer">
+              <input type="checkbox" class="filter-priority rounded border-slate-300 text-status-critical focus:ring-status-critical" value="Critical" checked>
+              <span class="ml-3 flex flex-1 justify-between items-center text-sm font-medium text-slate-700 group-hover:text-navy">
+                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-critical shadow-sm"></span> Critical</span>
+                <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full count-critical">0</span>
+              </span>
+            </label>
+            <label class="flex items-center group cursor-pointer">
+              <input type="checkbox" class="filter-priority rounded border-slate-300 text-status-high focus:ring-status-high" value="High" checked>
+              <span class="ml-3 flex flex-1 justify-between items-center text-sm font-medium text-slate-700 group-hover:text-navy">
+                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-high shadow-sm"></span> High</span>
+                <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full count-high">0</span>
+              </span>
+            </label>
+            <label class="flex items-center group cursor-pointer">
+              <input type="checkbox" class="filter-priority rounded border-slate-300 text-status-medium focus:ring-status-medium" value="Medium" checked>
+              <span class="ml-3 flex flex-1 justify-between items-center text-sm font-medium text-slate-700 group-hover:text-navy">
+                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-medium shadow-sm"></span> Medium</span>
+                <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full count-medium">0</span>
+              </span>
+            </label>
+            <label class="flex items-center group cursor-pointer">
+              <input type="checkbox" class="filter-priority rounded border-slate-300 text-status-resolved focus:ring-status-resolved" value="Low" checked>
+              <span class="ml-3 flex flex-1 justify-between items-center text-sm font-medium text-slate-700 group-hover:text-navy">
+                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-resolved shadow-sm"></span> Low</span>
+                <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full count-low">0</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Status Filters -->
+        <div>
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">Current Status</label>
+          <div class="space-y-2">
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" class="filter-status rounded border-slate-300 text-action focus:ring-action" value="open" checked>
+              <span class="ml-3 text-sm text-slate-700">Open / Reported</span>
+            </label>
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" class="filter-status rounded border-slate-300 text-action focus:ring-action" value="in_progress" checked>
+              <span class="ml-3 text-sm text-slate-700">In Progress</span>
+            </label>
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" class="filter-status rounded border-slate-300 text-action focus:ring-action" value="resolved" checked>
+              <span class="ml-3 text-sm text-slate-700">Resolved</span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- Category Dropdown -->
+        <div>
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">Issue Category</label>
+          <select id="filter-category" class="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-action focus:border-transparent p-2 outline-none">
+            <option value="all">All Categories</option>
+            <option value="pothole">Pothole</option>
+            <option value="road_damage">Road Damage</option>
+            <option value="streetlight">Streetlight</option>
+            <option value="garbage">Garbage</option>
+            <option value="water_leak">Water Leak</option>
+            <option value="sidewalk">Sidewalk</option>
+            <option value="traffic">Traffic</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="p-5 border-t border-surface-border bg-white mt-auto">
+        <button id="reset-filters" class="w-full text-sm font-semibold text-slate-500 hover:text-action py-2">Reset All Filters</button>
+      </div>
+    </aside>
+
+    <!-- CENTER PANEL: MAP -->
+    <section class="flex-grow relative z-0 h-full bg-slate-100">
+      <div id="fullMap" class="absolute inset-0 w-full h-full z-0"></div>
+      
+      <!-- Top Right Controls -->
+      <div class="absolute top-4 right-4 z-[400] flex flex-col gap-2 pointer-events-none">
+        <button disabled class="pointer-events-auto flex items-center gap-2 bg-white/80 backdrop-blur border border-surface-border text-slate-400 px-4 py-2 rounded-lg shadow-sm text-sm font-bold cursor-not-allowed" title="Heatmap Mode requires advanced GIS plugins">
+          <span class="material-symbols-outlined text-sm">map</span> Heatmap <span class="text-[10px] bg-slate-200 text-slate-500 px-1.5 rounded ml-1">Soon</span>
+        </button>
+        <button id="btn-recenter" class="pointer-events-auto flex items-center justify-center bg-white border border-surface-border text-navy w-10 h-10 rounded-full shadow-sm hover:bg-slate-50 hover:text-action transition-colors self-end" title="Recenter Map">
+          <span class="material-symbols-outlined text-lg">my_location</span>
+        </button>
+      </div>
+
+      <!-- Loading / Empty Overlays -->
+      <div id="map-loading" class="absolute inset-0 z-[500] bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-action mb-4"></div>
+        <p class="text-navy font-bold">Loading Infrastructure Map...</p>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: Issue Drawer -->
+    <aside id="issue-drawer" class="drawer-closed w-full md:w-96 bg-white border-l border-surface-border absolute right-0 top-0 bottom-0 z-40 shadow-2xl flex flex-col h-full overflow-y-auto">
+      
+      <div class="p-4 border-b border-surface-border flex justify-between items-center sticky top-0 bg-white/90 backdrop-blur z-10">
+        <h3 class="font-bold text-navy flex items-center gap-2">
+          <span class="material-symbols-outlined text-action">info</span> Issue Details
+        </h3>
+        <button id="close-drawer-btn" class="text-slate-400 hover:text-status-critical p-1 rounded-full hover:bg-status-critical/10 transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Drawer Content -->
+      <div class="p-6 flex-grow flex flex-col gap-6">
+        
+        <!-- Header Info -->
+        <div>
+          <div class="flex justify-between items-start mb-2">
+            <span id="drawer-id" class="text-xs font-bold text-slate-400">REP-0000</span>
+            <span id="drawer-status" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200">OPEN</span>
+          </div>
+          <h2 id="drawer-category" class="text-2xl font-extrabold text-navy capitalize mb-2">Issue Category</h2>
+          <p id="drawer-date" class="text-xs text-slate-500 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span> Reported on ...
+          </p>
+        </div>
+
+        <!-- Image Placeholder -->
+        <div class="w-full aspect-video bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative">
+          <img class="w-full h-full object-cover grayscale opacity-70" src="https://placehold.co/400x300?text=Issue+Image" alt="Issue image"/>
+        </div>
+
+        <!-- Priority Box -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex justify-between items-center">
+          <div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">AI Priority Assessment</p>
+            <div id="drawer-priority-wrap" class="flex items-center gap-1.5 font-bold text-slate-700">
+              <span class="material-symbols-outlined text-sm">local_fire_department</span>
+              <span id="drawer-priority">Unknown</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Severity Score</p>
+            <p class="text-lg font-black text-navy" id="drawer-score">0/100</p>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Description</h4>
+          <p id="drawer-desc" class="text-sm text-slate-700 leading-relaxed bg-surface p-3 rounded-lg border border-surface-border">No description provided.</p>
+        </div>
+
+        <!-- Location Details -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Exact Coordinates</h4>
+          <p class="text-sm font-mono text-slate-600 flex items-center gap-2 bg-surface p-2 rounded-lg border border-surface-border">
+            <span class="material-symbols-outlined text-action text-sm">my_location</span>
+            <span id="drawer-coords">0.0000, 0.0000</span>
+          </p>
+        </div>
+        
+      </div>
+
+      <!-- Action Footer -->
+      <div class="p-4 border-t border-surface-border bg-slate-50 sticky bottom-0 z-10">
+        <a id="drawer-action-btn" href="#" class="w-full btn-primary py-3 flex items-center justify-center gap-2 shadow-md">
+          View Full Complaint <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="./src/js/main.js"></script>
+  <script type="module">
+    import { CATEGORIES } from './src/js/ai-models.js';
+
+    (async function() {
+      // 1. Navigation setup
+      const token = localStorage.getItem('auth_token');
+      const role = localStorage.getItem('user_role');
+      
+      const navContainer = document.getElementById('navbar-container');
+      if (token && role === 'citizen') {
+        navContainer.innerHTML = window.Components.CitizenNavbar('map');
+      } else if (token && (role === 'admin' || role === 'gov')) {
+        // Fallback for govt (though not required by spec to build govt nav yet, it prevents crash)
+        navContainer.innerHTML = window.Components.CitizenNavbar('map');
+      } else {
+        // Logged out state navbar
+        navContainer.innerHTML = `
+          <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-surface-border">
+              <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div class="flex justify-between h-16">
+                      <a href="/index.html" class="flex items-center gap-2">
+                          <span class="material-symbols-outlined text-action text-3xl">account_balance</span>
+                          <span class="font-bold text-xl text-navy">CivicAI</span>
+                      </a>
+                      <div class="flex items-center gap-4">
+                          <a href="/login.html" class="text-sm font-medium text-navy hover:text-action">Sign In</a>
+                          <a href="/login.html" class="btn-primary py-2 px-4 text-sm">Report Issue</a>
+                      </div>
+                  </div>
+              </div>
+          </nav>
+        `;
+      }
+
+      // Navbar Logout
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('auth_token');
+          window.location.href = './login.html';
+        });
+      }
+
+      // 2. Mobile Toggles
+      const mobileFilterBtn = document.getElementById('mobile-filter-btn');
+      const closeFilterBtn = document.getElementById('close-filter-btn');
+      const filterPanel = document.getElementById('filter-panel');
+      
+      mobileFilterBtn.addEventListener('click', () => filterPanel.classList.add('filter-open'));
+      closeFilterBtn.addEventListener('click', () => filterPanel.classList.remove('filter-open'));
+
+      const issueDrawer = document.getElementById('issue-drawer');
+      document.getElementById('close-drawer-btn').addEventListener('click', () => {
+        issueDrawer.classList.remove('drawer-open');
+        issueDrawer.classList.add('drawer-closed');
+      });
+
+      // 3. Map Initialization
+      // Default to New Delhi or center of data
+      const fullMap = L.map('fullMap', { zoomControl: false }).setView([28.6139, 77.2090], 12);
+      L.control.zoom({ position: 'bottomright' }).addTo(fullMap);
+      
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+      }).addTo(fullMap);
+
+      window.allComplaints = [];
+      let markers = [];
+
+      // Load Data
+      try {
+        const response = await fetch('http://127.0.0.1:5005/api/complaints');
+        if (!response.ok) throw new Error('Network error');
+        window.allComplaints = await response.json();
+        document.getElementById('map-loading').classList.add('hidden');
+      } catch (err) {
+        console.error("Error loading map data:", err);
+        document.getElementById('map-loading').innerHTML = `
+          <div class="text-status-critical mb-2"><span class="material-symbols-outlined text-4xl">cloud_off</span></div>
+          <p class="text-navy font-bold">Failed to load data.</p>
+          <p class="text-sm text-slate-500 mt-1">Backend might be unreachable.</p>
+        `;
+      }
+
+      // Helper functions
+      const getMarkerColor = (priority) => {
+        switch (priority) {
+          case 'Critical': return '#ef4444';
+          case 'High': return '#f97316';
+          case 'Medium': return '#eab308';
+          case 'Low': return '#22c55e';
+          default: return '#94a3b8';
+        }
+      };
+
+      const createCustomIcon = (color) => {
+        return L.divIcon({
+          className: 'custom-div-icon',
+          html: `<div style="background-color:${color}; width:24px; height:24px; border-radius:50%; border:3px solid white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);"></div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+      };
+
+      const updateCounts = () => {
+        document.querySelector('.count-critical').innerText = window.allComplaints.filter(c => c.priority === 'Critical').length;
+        document.querySelector('.count-high').innerText = window.allComplaints.filter(c => c.priority === 'High').length;
+        document.querySelector('.count-medium').innerText = window.allComplaints.filter(c => c.priority === 'Medium').length;
+        document.querySelector('.count-low').innerText = window.allComplaints.filter(c => c.priority === 'Low').length;
+      };
+
+      // 4. Render Logic
+      const renderMarkers = () => {
+        markers.forEach(m => fullMap.removeLayer(m));
+        markers = [];
+        
+        // Get active filter values
+        const searchVal = document.getElementById('filter-search').value.toLowerCase();
+        const activePriorities = Array.from(document.querySelectorAll('.filter-priority:checked')).map(cb => cb.value);
+        const activeStatuses = Array.from(document.querySelectorAll('.filter-status:checked')).map(cb => cb.value);
+        const activeCategory = document.getElementById('filter-category').value;
+
+        const filtered = window.allComplaints.filter(issue => {
+          // Priority
+          if (issue.priority && !activePriorities.includes(issue.priority)) return false;
+          // Status (Fallback to 'open' if missing)
+          const st = issue.status || 'open';
+          if (!activeStatuses.includes(st)) return false;
+          // Category
+          if (activeCategory !== 'all' && issue.category_id !== activeCategory) return false;
+          // Search
+          if (searchVal) {
+            const matchId = issue.id.toString().includes(searchVal);
+            const matchDesc = (issue.description || '').toLowerCase().includes(searchVal);
+            const matchCat = (issue.category_id || '').toLowerCase().includes(searchVal);
+            if (!matchId && !matchDesc && !matchCat) return false;
+          }
+          return true;
+        });
+
+        filtered.forEach(issue => {
+          if (!issue.lat || !issue.lng) return;
+          
+          const catLabel = CATEGORIES.find(c => c.id === issue.category_id)?.label || issue.category_id;
+          const mColor = getMarkerColor(issue.priority);
+          
+          const marker = L.marker([issue.lat, issue.lng], {
+            icon: createCustomIcon(mColor)
+          }).addTo(fullMap);
+          
+          // Tooltip on hover
+          marker.bindTooltip(`<b>${catLabel}</b><br/>${issue.priority} Priority`, { direction: 'top', offset: [0, -10] });
+          
+          // Drawer on click
+          marker.on('click', () => {
+            openDrawer(issue, catLabel, mColor);
+          });
+          
+          markers.push(marker);
+        });
+      };
+
+      const openDrawer = (issue, catLabel, color) => {
+        // Populate Drawer
+        document.getElementById('drawer-id').innerText = `REP-${issue.id.toString().padStart(4, '0')}`;
+        document.getElementById('drawer-category').innerText = catLabel;
+        
+        const d = new Date(issue.date_reported || issue.created_at);
+        document.getElementById('drawer-date').innerHTML = `<span class="material-symbols-outlined text-[14px]">calendar_today</span> Reported on ${isNaN(d) ? 'Unknown' : d.toLocaleDateString()}`;
+        
+        document.getElementById('drawer-priority').innerText = issue.priority || 'Unknown';
+        document.getElementById('drawer-priority-wrap').style.color = color;
+        
+        document.getElementById('drawer-score').innerText = `${issue.severity_score !== null ? issue.severity_score : 0}/100`;
+        document.getElementById('drawer-desc').innerText = issue.description || 'No description provided.';
+        document.getElementById('drawer-coords').innerText = `${parseFloat(issue.lat).toFixed(4)}, ${parseFloat(issue.lng).toFixed(4)}`;
+        
+        // Status Badge
+        const statusBadge = document.getElementById('drawer-status');
+        const st = issue.status || 'open';
+        if (st === 'open') {
+          statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-status-high/10 text-status-high border border-status-high/20';
+          statusBadge.innerText = 'REPORTED';
+        } else if (st === 'in_progress') {
+          statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-status-medium/10 text-status-medium border border-status-medium/20';
+          statusBadge.innerText = 'IN PROGRESS';
+        } else {
+          statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-status-resolved/10 text-status-resolved border border-status-resolved/20';
+          statusBadge.innerText = 'RESOLVED';
+        }
+
+        // Action Link
+        document.getElementById('drawer-action-btn').href = `citizen/track.html?id=${issue.id}`;
+        
+        // Open
+        issueDrawer.classList.remove('drawer-closed');
+        issueDrawer.classList.add('drawer-open');
+        
+        // Mobile behavior: close filter panel if open
+        if (window.innerWidth <= 768) {
+          filterPanel.classList.remove('filter-open');
+        }
+      };
+
+      const recenterMap = () => {
+        if (markers.length > 0) {
+          const group = new L.featureGroup(markers);
+          fullMap.flyToBounds(group.getBounds(), { padding: [50, 50], maxZoom: 15, duration: 1 });
+        }
+      };
+
+      // 5. Wire Events
+      document.querySelectorAll('.filter-priority, .filter-status').forEach(cb => cb.addEventListener('change', renderMarkers));
+      document.getElementById('filter-category').addEventListener('change', renderMarkers);
+      document.getElementById('filter-search').addEventListener('input', () => {
+        // debounce slightly
+        clearTimeout(window.searchTimeout);
+        window.searchTimeout = setTimeout(renderMarkers, 300);
+      });
+      document.getElementById('btn-recenter').addEventListener('click', recenterMap);
+      
+      document.getElementById('reset-filters').addEventListener('click', () => {
+        document.getElementById('filter-search').value = '';
+        document.getElementById('filter-category').value = 'all';
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+        renderMarkers();
+        recenterMap();
+      });
+
+      // Init map view
+      updateCounts();
+      renderMarkers();
+      
+      setTimeout(() => {
+        fullMap.invalidateSize();
+        recenterMap();
+      }, 500);
+
+    })();
+  </script>
+</body>
+</html>

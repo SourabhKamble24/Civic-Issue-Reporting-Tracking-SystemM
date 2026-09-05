@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Analysis Result - CivicAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#dbe1ff",
+                        "on-secondary-container": "#fefcff",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "primary-container": "#1a2b47",
+                        "primary-fixed-dim": "#b6c7ea",
+                        "surface-bright": "#f8f9ff",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#c4c7c9",
+                        "surface-container-low": "#eff4ff",
+                        "error": "#ba1a1a",
+                        "on-background": "#0b1c30",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-tertiary-container": "#8f9294",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "surface-container-high": "#dce9ff",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed": "#00174b",
+                        "surface-dim": "#cbdbf5",
+                        "tertiary-fixed": "#e0e3e5",
+                        "surface-tint": "#4e5f7d",
+                        "tertiary-container": "#282b2d",
+                        "outline": "#75777e",
+                        "secondary": "#0051d5",
+                        "tertiary": "#131718",
+                        "surface-container": "#e5eeff",
+                        "primary-fixed": "#d6e3ff",
+                        "inverse-primary": "#b6c7ea",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-primary-container": "#8293b4",
+                        "on-primary-fixed": "#081b37",
+                        "outline-variant": "#c5c6ce",
+                        "on-surface-variant": "#44474d",
+                        "primary": "#031631",
+                        "inverse-surface": "#213145",
+                        "on-secondary-fixed-variant": "#003ea8",
+                        "surface": "#f8f9ff",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#191c1e",
+                        "background": "#f8f9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#374765",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface": "#0b1c30",
+                        "secondary-container": "#316bf3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "container-max": "1200px",
+                        "md": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .progress-ring__circle {
+            transition: stroke-dashoffset 1s ease-in-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-full flex overflow-hidden">
+<!-- SideNavBar (Hidden on Mobile) -->
+<aside class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface border-r border-outline-variant flex-col p-md gap-sm z-50">
+<div class="mb-lg px-md pt-sm">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[20px]">account_balance</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary">CivicAI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">City Services Portal</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-xs">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-label-md text-label-md">My Issues</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg font-bold scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="add_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span class="font-label-md text-label-md">Report Issue</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="font-label-md text-label-md">Live Map</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-label-md text-label-md">Notifications</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col md:ml-64 h-full relative overflow-y-auto">
+<!-- TopAppBar -->
+<header class="hidden md:flex fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-surface border-b border-outline-variant justify-between items-center h-16 px-xl transition-colors">
+<div class="flex items-center">
+<span class="font-headline-md text-headline-md text-primary font-bold">Analysis Result</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-sm focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary w-64 transition-all" placeholder="Search reports..." type="text"/>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center ml-2 border border-outline-variant cursor-pointer">
+<span class="font-label-sm text-label-sm text-on-secondary-container font-bold">JD</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Mobile Header (simplified for task flow) -->
+<header class="md:hidden flex items-center justify-between p-4 bg-surface border-b border-outline-variant sticky top-0 z-40">
+<button class="text-on-surface-variant">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold">Analysis Result</span>
+<div class="w-6"></div> <!-- Spacer -->
+</header>
+<!-- Canvas Content -->
+<div class="p-4 md:p-xl md:mt-16 w-full max-w-container-max mx-auto space-y-lg pb-24 md:pb-xl">
+<!-- Breadcrumb -->
+<div class="hidden md:flex items-center gap-2 text-sm text-on-surface-variant">
+<span>Reports</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span>REP-2023-11A</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-primary font-medium">AI Analysis</span>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Left Column: Image & Primary Status -->
+<div class="lg:col-span-5 flex flex-col gap-lg">
+<!-- Image Card -->
+<div class="bg-surface rounded-xl overflow-hidden border border-outline-variant relative group h-64 md:h-80 shadow-sm hover:shadow-[0px_4px_20px_rgba(26,43,71,0.08)] transition-shadow">
+<img class="w-full h-full object-cover" data-alt="A detailed, high-resolution photograph of a severe, large pothole in the middle of a paved city street. The asphalt is jagged and broken, revealing layers of dirt underneath. The image is taken in bright daylight, casting sharp shadows inside the hole. The overall color palette features urban greys and blacks, contrasting with the warm sunlight. The scene suggests a neglected urban environment needing immediate infrastructural repair." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0q0979XtLw21lTu_5E8owEpsaDoUbtR9TISymNWvkj4e0XGyt6O2GGpqhivDOgoxvh-FyXCjJBJi5kc_xRnfBG4rCkc1Me5uHaIQqVEwfkixqFQ6tGm2WVLi6IjuQeGLzemh_VNd6LcMOTuEZrzSUHg4H7CtlziJ4yLTTLiA8sBgS9jbXRwZKYySS3EhzZjTJUwjJkT4fb7BQMbmDG_qjswOgy2dn4jLTppG26hf315TkjQHK7IBn"/>
+<div class="absolute top-4 left-4 bg-surface/90 backdrop-blur-sm px-3 py-1 rounded-full border border-outline-variant flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-error pulse-animation"></div>
+<span class="font-label-sm text-label-sm text-on-surface font-bold uppercase tracking-wider">Live Analysis</span>
+</div>
+<!-- AI Bounding Box Overlay -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-1/2 border-2 border-dashed border-error bg-error/10 rounded pointer-events-none flex items-start justify-start p-2">
+<span class="bg-error text-on-error font-label-sm text-label-sm px-2 py-0.5 rounded shadow-sm">Target Area</span>
+</div>
+</div>
+<!-- AI Confidence Card -->
+<div class="bg-surface rounded-xl p-md border border-outline-variant shadow-sm flex items-center justify-between">
+<div>
+<h3 class="font-label-md text-label-md text-on-surface-variant">Detected Issue</h3>
+<p class="font-headline-md text-headline-md text-primary mt-1">Severe Road Pothole</p>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">AI Confidence</span>
+<div class="flex items-center gap-1 justify-end mt-1 text-emerald-600">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span class="font-headline-md text-headline-md font-bold">96%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Analysis Details -->
+<div class="lg:col-span-7 flex flex-col gap-lg">
+<!-- Priority Score Card (Hero) -->
+<div class="bg-surface rounded-xl p-lg border border-outline-variant shadow-sm relative overflow-hidden flex flex-col md:flex-row items-center gap-lg">
+<div class="absolute top-0 left-0 w-1.5 h-full bg-error"></div>
+<!-- Circular Gauge -->
+<div class="relative w-32 h-32 flex-shrink-0">
+<svg class="w-full h-full" viewbox="0 0 100 100">
+<circle class="text-surface-container-high stroke-current" cx="50" cy="50" fill="transparent" r="40" stroke-width="8"></circle>
+<circle class="text-error stroke-current progress-ring__circle" cx="50" cy="50" fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="15.072" stroke-linecap="round" stroke-width="8"></circle> <!-- 251.2 * (1 - 0.94) -->
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-display-lg text-display-lg text-primary">94</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">/100</span>
+</div>
+</div>
+<div class="flex-1 text-center md:text-left">
+<div class="inline-flex items-center gap-1.5 bg-error-container text-on-error-container px-3 py-1 rounded-full font-label-sm text-label-sm mb-3">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+                                Severity: Critical
+                            </div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">AI Priority Score</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                                This issue requires <strong class="text-primary">Immediate intervention recommended.</strong> Based on historical data, delays may cause significant secondary damage.
+                            </p>
+</div>
+</div>
+<!-- Reasoning Factors -->
+<div class="bg-surface rounded-xl p-lg border border-outline-variant shadow-sm flex-1">
+<h3 class="font-headline-md text-headline-md text-primary mb-md border-b border-outline-variant pb-3">Why this issue received a high priority</h3>
+<div class="space-y-4">
+<!-- Factor 1 -->
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center flex-shrink-0 text-on-error-container">
+<span class="material-symbols-outlined">error</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-md text-label-md font-bold text-on-surface">High severity</span>
+<span class="font-label-sm text-label-sm text-error">Critical</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5">
+<div class="bg-error h-1.5 rounded-full" style="width: 95%"></div>
+</div>
+</div>
+</div>
+<!-- Factor 2 -->
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center flex-shrink-0 text-on-secondary-fixed">
+<span class="material-symbols-outlined">school</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-md text-label-md font-bold text-on-surface">Near school</span>
+<span class="font-label-sm text-label-sm text-secondary">+15 pts</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5">
+<div class="bg-secondary h-1.5 rounded-full" style="width: 80%"></div>
+</div>
+</div>
+</div>
+<!-- Factor 3 -->
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center flex-shrink-0 text-on-secondary-fixed">
+<span class="material-symbols-outlined">directions_car</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-md text-label-md font-bold text-on-surface">High traffic area</span>
+<span class="font-label-sm text-label-sm text-secondary">+12 pts</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5">
+<div class="bg-secondary h-1.5 rounded-full" style="width: 75%"></div>
+</div>
+</div>
+</div>
+<!-- Factor 4 -->
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center flex-shrink-0 text-on-secondary-fixed">
+<span class="material-symbols-outlined">group</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-md text-label-md font-bold text-on-surface">Multiple citizen reports</span>
+<span class="font-label-sm text-label-sm text-secondary">5 reports</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5">
+<div class="bg-secondary h-1.5 rounded-full" style="width: 60%"></div>
+</div>
+</div>
+</div>
+<!-- Factor 5 -->
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center flex-shrink-0 text-on-error-container">
+<span class="material-symbols-outlined">directions_walk</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-md text-label-md font-bold text-on-surface">Pedestrian safety risk</span>
+<span class="font-label-sm text-label-sm text-error">High</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5">
+<div class="bg-error h-1.5 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col sm:flex-row gap-4 mt-2">
+<button class="flex-1 bg-secondary hover:bg-on-secondary-fixed text-on-primary py-3 px-6 rounded-lg font-label-md text-label-md font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
+<span class="material-symbols-outlined">track_changes</span>
+                            Track Complaint
+                        </button>
+<button class="flex-1 bg-surface hover:bg-surface-container-low text-primary border-2 border-primary py-3 px-6 rounded-lg font-label-md text-label-md font-bold flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined">analytics</span>
+                            View Full Analysis
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple animation trigger for the circular gauge on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const circle = document.querySelector('.progress-ring__circle');
+            if(circle) {
+                // Force a reflow before applying the stroke-dashoffset to ensure transition plays
+                circle.style.strokeDashoffset = '251.2';
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = '15.072'; // 94% filled
+                }, 100);
+            }
+        });
+    </script>
+</body></html>

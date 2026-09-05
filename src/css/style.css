@@ -1,0 +1,65 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@config "../../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply bg-surface text-navy font-sans antialiased;
+  }
+}
+
+@layer components {
+  /* Cards */
+  .card {
+    @apply bg-white border border-surface-border rounded-base shadow-sm p-6 transition-all duration-200;
+  }
+  .card-interactive {
+    @apply bg-white border border-surface-border rounded-base shadow-sm p-6 transition-all duration-200 hover:shadow-card hover:-translate-y-0.5 cursor-pointer;
+  }
+  
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center font-medium rounded-base px-5 py-2.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center font-medium rounded-base px-5 py-2.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-action text-white hover:bg-action-hover focus:ring-action;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center font-medium rounded-base px-5 py-2.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-white text-navy border border-surface-border hover:bg-surface focus:ring-surface-border;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center font-medium rounded-base px-5 py-2.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-transparent text-navy hover:bg-surface focus:ring-surface-border;
+  }
+
+  /* Forms */
+  .form-label {
+    @apply block text-sm font-medium text-navy mb-1.5;
+  }
+  .form-input {
+    @apply w-full rounded-base border border-slate-300 bg-white px-4 py-2.5 text-navy placeholder-slate-400 focus:border-action focus:outline-none focus:ring-2 focus:ring-action/20 transition-all duration-200;
+  }
+  .form-select {
+    @apply w-full rounded-base border border-slate-300 bg-white px-4 py-2.5 text-navy placeholder-slate-400 focus:border-action focus:outline-none focus:ring-2 focus:ring-action/20 transition-all duration-200 appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em];
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  }
+
+  /* Badges & Pills */
+  .badge {
+    @apply inline-flex items-center rounded-pill px-2.5 py-0.5 text-sm font-semibold;
+  }
+  .badge-critical {
+    @apply inline-flex items-center rounded-pill px-2.5 py-0.5 text-sm font-semibold bg-status-critical/10 text-status-critical;
+  }
+  .badge-high {
+    @apply inline-flex items-center rounded-pill px-2.5 py-0.5 text-sm font-semibold bg-status-high/10 text-status-high;
+  }
+  .badge-medium {
+    @apply inline-flex items-center rounded-pill px-2.5 py-0.5 text-sm font-semibold bg-status-medium/10 text-status-medium;
+  }
+  .badge-resolved {
+    @apply inline-flex items-center rounded-pill px-2.5 py-0.5 text-sm font-semibold bg-status-resolved/10 text-status-resolved;
+  }
+  .badge-neutral {
+    @apply inline-flex items-center rounded-pill px-2.5 py-0.5 text-sm font-semibold bg-status-neutral/10 text-status-neutral;
+  }
+}

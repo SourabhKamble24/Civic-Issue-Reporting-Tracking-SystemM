@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Explainability - CivicAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "surface-container-low": "#eff4ff",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#c4c7c9",
+                        "surface-variant": "#d3e4fe",
+                        "primary-fixed-dim": "#b6c7ea",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#081b37",
+                        "surface-bright": "#f8f9ff",
+                        "inverse-primary": "#b6c7ea",
+                        "secondary": "#0051d5",
+                        "on-surface": "#0b1c30",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#191c1e",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-container": "#282b2d",
+                        "inverse-surface": "#213145",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-primary-container": "#8293b4",
+                        "on-tertiary-container": "#8f9294",
+                        "secondary-container": "#316bf3",
+                        "on-error": "#ffffff",
+                        "tertiary": "#131718",
+                        "surface": "#f8f9ff",
+                        "background": "#f8f9ff",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c5c6ce",
+                        "secondary-fixed": "#dbe1ff",
+                        "primary-container": "#1a2b47",
+                        "on-secondary-fixed-variant": "#003ea8",
+                        "on-background": "#0b1c30",
+                        "on-primary-fixed-variant": "#374765",
+                        "on-surface-variant": "#44474d",
+                        "on-secondary-container": "#fefcff",
+                        "primary": "#031631",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#4e5f7d",
+                        "on-secondary-fixed": "#00174b",
+                        "primary-fixed": "#d6e3ff",
+                        "tertiary-fixed": "#e0e3e5",
+                        "outline": "#75777e",
+                        "surface-dim": "#cbdbf5",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "surface-container": "#e5eeff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1200px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "unit": "4px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row">
+<!-- Mobile TopNav: Only visible on mobile -->
+<div class="md:hidden flex justify-between items-center px-lg w-full bg-surface w-full h-16 sticky top-0 z-40 border-b border-outline-variant shadow-none">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary font-bold text-[24px]">public</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">CivicMonitor</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer active:opacity-80">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer active:opacity-80">settings</span>
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full border border-outline-variant cursor-pointer active:opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpzJB-qjMAn3YVqTnXyP-__ZPnRTxcCNgw6G_vFiudSq62L-1olpG0dFwVrjLbHT7VGwuSD9Ms5srah35-S9_HZPh0d032_3l_Lp6zIxpx-O2_4lJ8RtfFBSxLnQH9ARLos4vd2N3pJKmjin0TpWdm7VrWe0qNwrhUOKHzBa0YRJVBzSUTHZL0yws-F8FEGWD1XA0bFYwzZpiJbXVW95CFTGoWpfgcKhwLmnV6jnCne5GkmjeqhbwC"/>
+</div>
+</div>
+<!-- Desktop SideNav -->
+<div class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 z-50 bg-surface-container-low border-r border-outline-variant p-md">
+<!-- Header -->
+<div class="flex items-center gap-3 mb-xl">
+<img alt="City Infrastructure Authority Logo" class="w-12 h-12 rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqhcZws1bgYNFH0n_rIvMZWGOUP7Tzmi1sFOBISX34voqY_eQfd-LmWpcV22O_heR25JjshbyU85TzmuDzCCHcFqDa7YVpZHoiB36ypKe2v8k_ZeydkBW-Pe9VdTomICr1eZV4R0VUv5Ido9sJbrQCzqaeV3RhOh-a3AF6JaChWVe-2dradhVDVD-jcVdp_qyo3ep90U1Gw0pqrtnGuh3RvEhevWUmldHA-tMOXUzVDogjzUp5-EoF"/>
+<div>
+<h2 class="font-headline-md text-[18px] font-bold text-primary leading-tight">Admin Portal</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Infrastructure Dept.</p>
+</div>
+</div>
+<!-- CTA -->
+<button class="w-full bg-secondary hover:bg-secondary-container text-on-secondary font-label-md text-label-md py-sm px-md rounded-lg mb-xl transition-all duration-200 ease-in-out shadow-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+            Report New Issue
+        </button>
+<!-- Navigation Links -->
+<nav class="flex-1 flex flex-col gap-xs">
+<a class="flex items-center gap-3 px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Active State on Analytics indicating AI Insights -->
+<a class="flex items-center gap-3 px-md py-sm rounded-lg bg-secondary-container text-on-secondary-container font-semibold transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">list_alt</span>
+<span class="font-label-md text-label-md">Issue Queue</span>
+</a>
+<a class="flex items-center gap-3 px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-md text-label-md">Map View</span>
+</a>
+<a class="flex items-center gap-3 px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">terminal</span>
+<span class="font-label-md text-label-md">System Logs</span>
+</a>
+</nav>
+<!-- Footer Navigation -->
+<div class="mt-auto pt-md border-t border-outline-variant flex flex-col gap-xs">
+<a class="flex items-center gap-3 px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+<a class="flex items-center gap-3 px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Sign Out</span>
+</a>
+</div>
+</div>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 flex flex-col min-h-screen">
+<!-- Desktop TopNav (Simplified for Canvas area, acting as page header) -->
+<header class="hidden md:flex justify-between items-center px-lg w-full bg-surface w-full h-16 sticky top-0 z-40 border-b border-outline-variant shadow-none">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary font-bold text-[24px]">analytics</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary tracking-tight">AI Explainability Overview</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 border-1.5 border-outline-variant rounded-lg text-body-md focus:border-secondary focus:ring-1 focus:ring-secondary outline-none bg-white w-64 transition-all" placeholder="Search report ID..." type="text"/>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full cursor-pointer transition-colors">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full cursor-pointer transition-colors">settings</span>
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full border border-outline-variant cursor-pointer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQ3aKHF0sl1OSO06BRMLh1nPHj6-RPBPaYGaurPKMazLdKBJikfu7u0hh1TApvws5YW5AMeRy6yWWB2S8rwkHQIalLk22hw6xJmQjgGkNOSA-jMuXQwf6mwdSvpPQKJQmjFrZz87EDQ7ULrvX6h5nltZ-hU5iT0jEaHm1NjwNcX1A_jjI-d9ICM9mIj_aMZKzvlhftJLMmLr1bRC78lvQIdhJS-4llgVyeDm9vrZsk-5N9YcuUw9Lq"/>
+</div>
+</header>
+<!-- Main Content Area -->
+<div class="p-4 md:p-xl flex-1 w-full max-w-container-max mx-auto">
+<div class="mb-lg flex items-center justify-between">
+<div>
+<div class="flex items-center gap-2 mb-xs">
+<span class="px-3 py-1 bg-error-container text-on-error-container font-label-sm text-label-sm rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">warning</span> Critical Priority
+                        </span>
+<span class="font-label-md text-on-surface-variant">ID: REP-2023-11A</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Severe Pothole Detection</h2>
+<p class="font-body-md text-on-surface-variant">Submitted Nov 10 • Road Infrastructure</p>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Left Column: Context (Image & Map) -->
+<div class="lg:col-span-5 flex flex-col gap-lg">
+<!-- Image Card -->
+<div class="bg-[#F8FAFC] rounded-xl border border-outline-variant p-md hover:shadow-[0_4px_20px_rgba(26,43,71,0.08)] transition-shadow duration-300 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+<div class="flex items-center justify-between mb-sm">
+<h3 class="font-headline-md text-[18px] text-primary flex items-center gap-2">
+<span class="material-symbols-outlined">image</span> AI Vision Analysis
+                            </h3>
+<button class="text-secondary font-label-sm hover:underline">View Original</button>
+</div>
+<div class="relative w-full aspect-video rounded-lg overflow-hidden border border-outline-variant mb-md bg-surface-container-highest">
+<!-- Image Placeholder with AI Overlay -->
+<img class="w-full h-full object-cover" data-alt="A high-resolution photograph of an urban asphalt road featuring a large, dangerous pothole. The image has a futuristic, semi-transparent digital overlay with a glowing neon red bounding box drawn tightly around the pothole. Next to the bounding box is a small digital tag reading '99% Confidence: Severe Damage'. The lighting is bright daylight, highlighting the rough texture of the broken asphalt against the smooth road surface. The overall aesthetic feels like a professional government monitoring dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6sbqXGgaQk4y95kddDex97WOtWGjxTpp7oddci98PpMvwlPx4gfxlLWdzhdUDp8feYafsURjwSC-rtnQjKXTmLCbJDj0uU31trmeztjW3G1a__2PkVi1YPJhn2xzskE8JsCLjrjisB1zFd2blLzGz7sl8Os2hFGlYodYDvGm5wJcthNk-V1R1MZv8gUdTFAKPTj21nKtVywkY-ICJ3SH7lYZKAnAe9aU92RdSUiVBArjCi3qewWZz"/>
+<!-- Simulated AI Bounding Box Overlay for visual effect if image fails to load perfectly -->
+<div class="absolute top-1/4 left-1/4 w-1/2 h-1/2 border-2 border-error bg-error/10 rounded-sm">
+<span class="absolute -top-6 left-[-2px] bg-error text-white font-label-sm px-2 py-0.5 rounded-t-sm whitespace-nowrap shadow-sm">
+                                    Anomaly Detected (98%)
+                                </span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<div class="bg-white p-sm border border-outline-variant rounded-lg">
+<p class="font-label-sm text-on-surface-variant mb-1">Estimated Depth</p>
+<p class="font-headline-md text-[16px] text-primary">~8.5 inches</p>
+</div>
+<div class="bg-white p-sm border border-outline-variant rounded-lg">
+<p class="font-label-sm text-on-surface-variant mb-1">Volume Metric</p>
+<p class="font-headline-md text-[16px] text-primary">Critical (Vol-3)</p>
+</div>
+</div>
+</div>
+<!-- Map Context Card -->
+<div class="bg-[#F8FAFC] rounded-xl border border-outline-variant p-md hover:shadow-[0_4px_20px_rgba(26,43,71,0.08)] transition-shadow duration-300 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary-fixed-dim"></div>
+<h3 class="font-headline-md text-[18px] text-primary mb-sm flex items-center gap-2">
+<span class="material-symbols-outlined">location_on</span> Incident Location
+                        </h3>
+<div class="w-full h-48 rounded-lg overflow-hidden border border-outline-variant relative bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist vector map of an urban city grid designed in a modern light-mode interface style. The map uses subtle shades of light blue, white, and pale gray to define streets, parks, and blocks. A distinct, glowing red pin marks a specific intersection. The map is highly legible, avoiding clutter, and perfectly matches a premium, trustworthy civic dashboard aesthetic." data-location="New York City" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIVRngz14OiQHqJS9Xb0Wcca832qhO9yKsHJEffUMw481oexkE21VnESfAybsuvlcl8H2UhfQ2y7RcRqjmg2lVKVCtXnNj0cfHiJaCfdasOiszykOcksjqf-k6ntfRRKTU7fu_nXvmHtLsiBQDkBvkv07F-BhrcDNiR6l58Ljdi67dTyO0vG78C1x_IqN9_Pqom6XDuox1ve4thi6rYhTx0qQo42aHH_1m9jBhWcbEFRdvKVQMFvGu"/>
+<!-- Fake Map Pin Overlay -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-4 h-4 bg-error rounded-full shadow-[0_0_0_4px_rgba(186,26,26,0.2)] animate-pulse"></div>
+</div>
+</div>
+<p class="font-body-md text-on-surface mt-sm">402 W 42nd St, Central District</p>
+</div>
+</div>
+<!-- Right Column: AI Insights & Actions -->
+<div class="lg:col-span-7 flex flex-col gap-lg">
+<!-- Priority Score Card (Glassmorphism/Premium feel) -->
+<div class="bg-gradient-to-br from-surface to-surface-container-low rounded-xl border border-outline-variant p-xl hover:shadow-[0_4px_20px_rgba(26,43,71,0.08)] transition-shadow duration-300 relative overflow-hidden flex flex-col md:flex-row items-center gap-xl">
+<!-- Circular Gauge representation -->
+<div class="relative w-40 h-40 flex-shrink-0 flex items-center justify-center">
+<!-- SVG Gauge -->
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="45" stroke="#e5eeff" stroke-width="8"></circle>
+<circle class="transition-all duration-1000 ease-out" cx="50" cy="50" fill="none" r="45" stroke="#ba1a1a" stroke-dasharray="282.7" stroke-dashoffset="16.9" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-display-lg text-display-lg text-error leading-none">94</span>
+<span class="font-label-sm text-on-surface-variant uppercase tracking-wider mt-1">Priority</span>
+</div>
+</div>
+<div class="flex-1 w-full">
+<h3 class="font-headline-md text-headline-md text-primary mb-md">Priority Breakdown</h3>
+<div class="space-y-4">
+<!-- Progress Item -->
+<div>
+<div class="flex justify-between font-label-sm mb-1">
+<span class="text-on-surface">Severity</span>
+<span class="text-primary font-bold">30/30</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-error h-2 rounded-full" style="width: 100%"></div>
+</div>
+</div>
+<!-- Progress Item -->
+<div>
+<div class="flex justify-between font-label-sm mb-1">
+<span class="text-on-surface">Citizen Impact</span>
+<span class="text-primary font-bold">25/25</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-[#d97706] h-2 rounded-full" style="width: 100%"></div>
+</div>
+</div>
+<!-- Progress Item -->
+<div>
+<div class="flex justify-between font-label-sm mb-1">
+<span class="text-on-surface">Location Risk</span>
+<span class="text-primary font-bold">20/20</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-[#d97706] h-2 rounded-full" style="width: 100%"></div>
+</div>
+</div>
+<!-- Progress Item -->
+<div>
+<div class="flex justify-between font-label-sm mb-1">
+<span class="text-on-surface">Image Evidence</span>
+<span class="text-primary font-bold">10/10</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-secondary h-2 rounded-full" style="width: 100%"></div>
+</div>
+</div>
+<!-- Progress Item -->
+<div>
+<div class="flex justify-between font-label-sm mb-1">
+<span class="text-on-surface">Recurrence</span>
+<span class="text-primary font-bold">9/15</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-secondary h-2 rounded-full" style="width: 60%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Rationale Grid -->
+<div class="bg-white rounded-xl border border-outline-variant p-lg hover:shadow-[0_4px_20px_rgba(26,43,71,0.08)] transition-shadow duration-300">
+<h3 class="font-headline-md text-[20px] text-primary mb-md flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">psychology</span> Why AI prioritized this issue
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Factor Card -->
+<div class="flex items-start gap-3 p-3 bg-surface-bright rounded-lg border border-surface-container-high">
+<div class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">school</span>
+</div>
+<div>
+<p class="font-label-md text-on-surface font-semibold">Proximity to school</p>
+<p class="font-label-sm text-on-surface-variant">+15 pts • Zone 1 Priority</p>
+</div>
+</div>
+<!-- Factor Card -->
+<div class="flex items-start gap-3 p-3 bg-surface-bright rounded-lg border border-surface-container-high">
+<div class="w-8 h-8 rounded-full bg-[#fef3c7] text-[#92400e] flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">directions_walk</span>
+</div>
+<div>
+<p class="font-label-md text-on-surface font-semibold">High pedestrian traffic</p>
+<p class="font-label-sm text-on-surface-variant">+12 pts • Daily flow &gt; 5k</p>
+</div>
+</div>
+<!-- Factor Card -->
+<div class="flex items-start gap-3 p-3 bg-surface-bright rounded-lg border border-surface-container-high">
+<div class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">broken_image</span>
+</div>
+<div>
+<p class="font-label-md text-on-surface font-semibold">Severe damage</p>
+<p class="font-label-sm text-error font-semibold">Critical Impact</p>
+</div>
+</div>
+<!-- Factor Card -->
+<div class="flex items-start gap-3 p-3 bg-surface-bright rounded-lg border border-surface-container-high">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">forum</span>
+</div>
+<div>
+<p class="font-label-md text-on-surface font-semibold">Multiple reports</p>
+<p class="font-label-sm text-on-surface-variant">5 clustered reports</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Authority Actions Panel -->
+<div class="bg-primary text-white rounded-xl p-lg relative overflow-hidden shadow-[0_10px_30px_rgba(26,43,71,0.12)]">
+<!-- Abstract Background Element -->
+<div class="absolute -right-20 -top-20 w-64 h-64 bg-secondary opacity-20 rounded-full blur-3xl"></div>
+<div class="relative z-10">
+<h3 class="font-headline-md text-[20px] mb-md flex items-center gap-2">
+<span class="material-symbols-outlined">gavel</span> Authority Actions
+                            </h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md mb-lg">
+<div>
+<p class="font-label-sm text-primary-fixed-dim uppercase tracking-wider mb-1">Recommended Action</p>
+<p class="font-headline-md text-[18px] text-error font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[20px]">flash_on</span> Immediate Dispatch
+                                    </p>
+</div>
+<div>
+<p class="font-label-sm text-primary-fixed-dim uppercase tracking-wider mb-1">Assigned Dept</p>
+<p class="font-body-md font-semibold">Public Works</p>
+</div>
+<div>
+<p class="font-label-sm text-primary-fixed-dim uppercase tracking-wider mb-1">SLA Deadline</p>
+<p class="font-body-md font-semibold text-error-container">1h remaining</p>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 border-t border-primary-fixed-variant pt-md">
+<button class="flex-1 bg-secondary hover:bg-secondary-container text-on-secondary font-label-md text-label-md py-3 px-6 rounded-lg transition-all duration-200 shadow-sm flex justify-center items-center gap-2">
+<span class="material-symbols-outlined">send</span> Assign Department
+                                </button>
+<button class="flex-1 bg-transparent border-2 border-primary-fixed text-primary-fixed hover:bg-primary-fixed/10 font-label-md text-label-md py-3 px-6 rounded-lg transition-all duration-200 flex justify-center items-center gap-2">
+<span class="material-symbols-outlined">priority_high</span> Escalate
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="h-xl"></div> <!-- Bottom Spacer -->
+</div>
+</main>
+</body></html>

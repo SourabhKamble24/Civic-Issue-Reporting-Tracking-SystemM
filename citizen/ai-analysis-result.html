@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en" class="light h-full">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Analysis Result - CivicAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="../src/css/style.css">
+    <style>
+        .progress-ring__circle {
+            transition: stroke-dashoffset 1s ease-in-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-full flex overflow-hidden">
+    
+    <!-- SideNavBar (Hidden on Mobile) -->
+    <aside class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface border-r border-outline-variant flex-col p-md gap-sm z-50">
+        <div class="mb-lg px-md pt-sm">
+            <div class="p-xl border-b border-surface-container-highest shrink-0 flex items-center gap-sm">
+            <img src="/logo.png" alt="CivicAI Logo" class="w-10 h-10 rounded-full object-cover shadow-sm bg-white">
+            <div>
+                <h1 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">CivicAI</h1>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">City Services Portal</p>
+            </div>
+        </div>
+        </div>
+        <nav class="flex-1 flex flex-col gap-xs">
+            <a href="dashboard.html" class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-md text-label-md">Dashboard</span>
+            </a>
+            <a href="register-complaint.html" class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+                <span class="material-symbols-outlined">add_circle</span>
+                <span class="font-label-md text-label-md">Report Issue</span>
+            </a>
+            <a href="../map.html" class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+                <span class="material-symbols-outlined">map</span>
+                <span class="font-label-md text-label-md">Live Map</span>
+            </a>
+            <a href="#" class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+                <span class="material-symbols-outlined">notifications</span>
+                <span class="font-label-md text-label-md">Notifications</span>
+            </a>
+            <a href="register-complaint.html" class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg font-bold">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                <span class="font-label-md text-label-md">Report Issue</span>
+            </a>
+        </nav>
+        <div class="mt-auto pb-4">
+            <a href="#" id="logout-btn" class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-error-container hover:text-error rounded-lg transition-colors">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="font-label-md text-label-md">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col md:ml-64 h-full relative overflow-y-auto w-full">
+        <!-- TopAppBar -->
+        <header class="hidden md:flex fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-surface border-b border-outline-variant justify-between items-center h-16 px-xl transition-colors">
+            <div class="flex items-center">
+                <span class="font-headline-md text-headline-md text-primary font-bold">Analysis Result</span>
+            </div>
+            <div class="flex items-center gap-lg">
+                <div class="flex items-center gap-sm relative">
+                    <button class="p-2 text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high rounded-full">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
+                    <button type="button" class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center ml-2 border border-outline-variant font-bold text-on-secondary-container text-sm cursor-pointer" id="user-menu-button-top" aria-expanded="false" aria-haspopup="true">
+                        C
+                    </button>
+                    <div class="hidden origin-top-right absolute right-0 top-10 mt-2 w-48 rounded-xl shadow-lg py-1 bg-surface ring-1 ring-black ring-opacity-5 focus:outline-none z-50 border border-outline-variant" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button-top" tabindex="-1" id="user-menu-dropdown">
+                        <div class="px-4 py-2 border-b border-surface-container-highest">
+                            <p class="font-label-md text-on-surface truncate" id="nav-user-email">citizen@example.com</p>
+                            <p class="font-label-sm text-on-surface-variant">Citizen</p>
+                        </div>
+                        <a href="#" class="block px-4 py-2 font-label-md text-on-surface hover:bg-surface-container-high transition-colors" role="menuitem" tabindex="-1">Settings</a>
+                        <a href="#" class="block px-4 py-2 font-label-md text-error hover:bg-error-container transition-colors" role="menuitem" tabindex="-1" id="logout-btn-top">Sign out</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Mobile Header -->
+        <header class="md:hidden flex items-center justify-between p-4 bg-surface border-b border-outline-variant sticky top-0 z-40">
+            <a href="dashboard.html" class="text-on-surface-variant">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold">Analysis Result</span>
+            <div class="w-6"></div> 
+        </header>
+
+        <!-- Canvas Content -->
+        <div class="p-4 md:p-xl md:mt-16 w-full space-y-lg pb-24 md:pb-xl" id="main-content">
+            
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden flex flex-col items-center justify-center py-20 text-center">
+                <div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center text-on-surface-variant mb-6 border border-outline-variant">
+                    <span class="material-symbols-outlined text-4xl">search_off</span>
+                </div>
+                <h2 class="font-headline-md text-headline-md text-on-surface mb-2">No Analysis Found</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-[448px]">We couldn't find a recent AI analysis result. Please submit a new issue to view its analysis.</p>
+                <div class="flex gap-4">
+                    <a href="dashboard.html" class="px-6 py-2 border border-primary text-primary rounded-lg hover:bg-surface-container-low transition-colors font-label-md">Back to Dashboard</a>
+                    <a href="register-complaint.html" class="px-6 py-2 bg-secondary text-on-secondary rounded-lg font-label-md">Report New Issue</a>
+                </div>
+            </div>
+
+            <div id="analysis-view" class="hidden">
+                <!-- Breadcrumb -->
+                <div class="hidden md:flex items-center gap-2 text-sm text-on-surface-variant mb-lg">
+                    <a href="dashboard.html" class="hover:text-primary transition-colors">Reports</a>
+                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    <span id="breadcrumb-id" class="text-on-surface">...</span>
+                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    <span class="text-primary font-medium">AI Analysis</span>
+                </div>
+
+                <!-- Duplicate Alert -->
+                <div id="duplicate-alert" class="hidden mb-lg bg-[#FEF3C7] border-l-4 border-[#D97706] p-4 rounded-r-xl">
+                    <div class="flex items-start">
+                        <span class="material-symbols-outlined text-[#D97706] mr-3">file_copy</span>
+                        <div>
+                            <h3 class="font-label-md text-label-md font-bold text-[#92400E]">Similar Issue Already Reported</h3>
+                            <p class="font-body-md text-body-md text-[#92400E] mt-1">Our AI detected a high similarity with an existing report <span id="duplicate-id" class="font-bold"></span>. Your submission has been linked.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bento Grid Layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+                    <!-- Left Column: Image & Primary Status -->
+                    <div class="lg:col-span-5 flex flex-col gap-lg">
+                        <!-- Map/Image Card -->
+                        <div id="analysis-map-container" class="bg-surface rounded-xl overflow-hidden border border-outline-variant relative group h-64 md:h-80 shadow-sm transition-shadow">
+                            <div class="w-full h-full bg-surface-variant animate-pulse"></div>
+                        </div>
+
+                        <!-- AI Confidence Card -->
+                        <div class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant shadow-sm flex items-center justify-between">
+                            <div>
+                                <h3 class="font-label-md text-label-md text-on-surface-variant">Detected Issue</h3>
+                                <p class="font-headline-md text-headline-md text-primary mt-1 capitalize" id="ui-category">...</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-label-sm text-label-sm text-on-surface-variant block">AI Confidence</span>
+                                <div class="flex items-center gap-1 justify-end mt-1 text-[#059669]">
+                                    <span class="material-symbols-outlined text-[18px]" id="verified-icon">verified</span>
+                                    <span class="font-headline-md text-headline-md font-bold" id="ui-confidence">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Analysis Details -->
+                    <div class="lg:col-span-7 flex flex-col gap-lg">
+                        <!-- Priority Score Card (Hero) -->
+                        <div class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-sm relative overflow-hidden flex flex-col md:flex-row items-center gap-lg">
+                            <div id="priority-band" class="absolute top-0 left-0 w-1.5 h-full bg-outline-variant"></div>
+                            
+                            <!-- Circular Gauge -->
+                            <div class="relative w-32 h-32 flex-shrink-0">
+                                <svg class="w-full h-full" viewBox="0 0 100 100">
+                                    <circle class="text-surface-container stroke-current" cx="50" cy="50" fill="transparent" r="40" stroke-width="8"></circle>
+                                    <circle id="gauge-circle" class="text-outline-variant stroke-current progress-ring__circle" cx="50" cy="50" fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" stroke-width="8"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="font-display-lg text-display-lg text-primary" id="ui-score">0</span>
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant">/100</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex-1 text-center md:text-left">
+                                <div id="priority-pill" class="inline-flex items-center gap-1.5 bg-surface-container-high text-on-surface px-3 py-1 rounded-full font-label-sm text-label-sm mb-3">
+                                    <span class="material-symbols-outlined text-[16px]">info</span>
+                                    Severity: Unknown
+                                </div>
+                                <h2 class="font-headline-lg text-headline-lg text-primary mb-2">AI Priority Score</h2>
+                                <p class="font-body-md text-body-md text-on-surface-variant" id="ui-recommendation">
+                                    System recommendation unavailable.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Reasoning Factors -->
+                        <div class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-sm flex-1">
+                            <h3 class="font-headline-md text-headline-md text-primary mb-md border-b border-outline-variant pb-3">Why this issue received a high priority</h3>
+                            
+                            <div class="space-y-4">
+                                <!-- Factor 1 -->
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center flex-shrink-0">
+                                        <span class="material-symbols-outlined">add_a_photo</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="font-label-md text-label-md font-bold text-on-surface">Image Evidence</span>
+                                            <span class="font-label-sm text-label-sm text-secondary" id="val-image">0/100</span>
+                                        </div>
+                                        <div class="w-full bg-surface-container-high rounded-full h-1.5">
+                                            <div class="bg-secondary h-1.5 rounded-full transition-all duration-1000" id="bar-image" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Factor 2 -->
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center flex-shrink-0">
+                                        <span class="material-symbols-outlined">description</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="font-label-md text-label-md font-bold text-on-surface">Text Urgency</span>
+                                            <span class="font-label-sm text-label-sm text-secondary" id="val-text">0/100</span>
+                                        </div>
+                                        <div class="w-full bg-surface-container-high rounded-full h-1.5">
+                                            <div class="bg-secondary h-1.5 rounded-full transition-all duration-1000" id="bar-text" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Factor 3 -->
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center flex-shrink-0">
+                                        <span class="material-symbols-outlined">share_location</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="font-label-md text-label-md font-bold text-on-surface">Location Importance</span>
+                                            <span class="font-label-sm text-label-sm text-secondary" id="val-loc">0/100</span>
+                                        </div>
+                                        <div class="w-full bg-surface-container-high rounded-full h-1.5">
+                                            <div class="bg-secondary h-1.5 rounded-full transition-all duration-1000" id="bar-loc" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Factor 4 -->
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center flex-shrink-0">
+                                        <span class="material-symbols-outlined">content_copy</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="font-label-md text-label-md font-bold text-on-surface">Duplicate Score</span>
+                                            <span class="font-label-sm text-label-sm text-secondary" id="val-dup">0/100</span>
+                                        </div>
+                                        <div class="w-full bg-surface-container-high rounded-full h-1.5">
+                                            <div class="bg-secondary h-1.5 rounded-full transition-all duration-1000" id="bar-dup" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex flex-col sm:flex-row gap-4 mt-2">
+                            <a href="dashboard.html" id="link-track-complaint" class="flex-1 bg-secondary hover:opacity-90 text-on-secondary py-3 px-6 rounded-lg font-label-md text-label-md font-bold flex items-center justify-center gap-2 transition-opacity shadow-sm">
+                                <span class="material-symbols-outlined">track_changes</span>
+                                Track Complaint
+                            </a>
+                            <a href="dashboard.html" class="flex-1 bg-surface-container-lowest hover:bg-surface-container-high text-primary border-2 border-primary py-3 px-6 rounded-lg font-label-md text-label-md font-bold flex items-center justify-center gap-2 transition-colors">
+                                <span class="material-symbols-outlined">dashboard</span>
+                                Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../src/js/main.js"></script>
+    <script type="module">
+        import { CATEGORIES } from '../src/js/ai-models.js';
+
+        (function() {
+            // Auth check
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.removeItem('auth_token');
+                    window.location.href = '../login.html';
+                });
+            }
+
+            // Fetch Data
+            const resultDataStr = sessionStorage.getItem('last_complaint_result');
+            
+            if (!resultDataStr) {
+                document.getElementById('empty-state').classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('analysis-view').classList.remove('hidden');
+            
+            try {
+                const data = JSON.parse(resultDataStr);
+                
+                const displayId = data.id ? `ID-${data.id.toString().padStart(4, '0')}` : 'NEW REPORT';
+                document.getElementById('breadcrumb-id').innerText = displayId;
+                
+                const catLabel = CATEGORIES.find(c => c.id === data.category_id)?.label || data.category_id || 'Unknown';
+                document.getElementById('ui-category').innerText = catLabel;
+                
+                if (data.is_duplicate) {
+                    const dupAlert = document.getElementById('duplicate-alert');
+                    dupAlert.classList.remove('hidden');
+                    if (data.duplicate_of) {
+                        document.getElementById('duplicate-id').innerText = `(ID-${data.duplicate_of})`;
+                    }
+                }
+
+                // Map
+                const lat = data.lat || 28.6139;
+                const lng = data.lng || 77.2090;
+                document.getElementById('analysis-map-container').innerHTML = `
+                    <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=${lng-0.005}%2C${lat-0.005}%2C${lng+0.005}%2C${lat+0.005}&amp;layer=mapnik&amp;marker=${lat}%2C${lng}"></iframe>
+                    <div class="absolute top-4 left-4 bg-surface/90 backdrop-blur-sm px-3 py-1 rounded-full border border-outline-variant flex items-center gap-2 pointer-events-none">
+                        <div class="w-2 h-2 rounded-full bg-error pulse-animation"></div>
+                        <span class="font-label-sm text-label-sm text-on-surface font-bold uppercase tracking-wider">Live Analysis</span>
+                    </div>
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-1/2 border-2 border-dashed border-error bg-error/10 rounded pointer-events-none flex items-start justify-start p-2">
+                        <span class="bg-error text-on-error font-label-sm text-label-sm px-2 py-0.5 rounded shadow-sm">Target Area</span>
+                    </div>
+                `;
+
+                // Confidence
+                const conf = data.image_confidence !== undefined ? data.image_confidence : 0;
+                document.getElementById('ui-confidence').innerText = `${conf}%`;
+                if (!data.ai_verified) {
+                    document.getElementById('verified-icon').classList.add('opacity-50');
+                }
+
+                // Priority
+                const score = data.severity_score !== undefined ? data.severity_score : 0;
+                document.getElementById('ui-score').innerText = score;
+                
+                const priority = data.priority || 'Low';
+                const band = document.getElementById('priority-band');
+                const pill = document.getElementById('priority-pill');
+                const rec = document.getElementById('ui-recommendation');
+                const gaugeCircle = document.getElementById('gauge-circle');
+
+                let colorClass = 'text-[#F59E0B]'; // Amber
+                let bgClass = 'bg-[#F59E0B]';
+                let pillBgClass = 'bg-[#FEF3C7] text-[#92400E]';
+                let recommendationText = "Monitor and address through routine maintenance.";
+                
+                if (priority === 'Critical') {
+                    colorClass = 'text-error';
+                    bgClass = 'bg-error';
+                    pillBgClass = 'bg-error-container text-on-error-container';
+                    recommendationText = "<strong class='text-primary'>Immediate intervention recommended.</strong> Based on historical data, delays may cause significant secondary damage.";
+                } else if (priority === 'High') {
+                    colorClass = 'text-[#EA580C]'; // Orange
+                    bgClass = 'bg-[#EA580C]';
+                    pillBgClass = 'bg-[#FFEDD5] text-[#9A3412]';
+                    recommendationText = "<strong class='text-primary'>Priority intervention recommended.</strong> High probability of escalation if left unresolved.";
+                }
+
+                band.className = `absolute top-0 left-0 w-1.5 h-full ${bgClass}`;
+                pill.className = `inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-label-sm text-label-sm mb-3 ${pillBgClass}`;
+                pill.innerHTML = `<span class="material-symbols-outlined text-[16px]">warning</span> Severity: ${priority}`;
+                rec.innerHTML = recommendationText;
+                
+                gaugeCircle.classList.remove('text-outline-variant');
+                gaugeCircle.classList.add(colorClass);
+
+                // Animate Gauge
+                setTimeout(() => {
+                    const offset = 251.2 * (1 - (score / 100));
+                    gaugeCircle.style.strokeDashoffset = offset;
+                }, 100);
+
+                document.getElementById('link-track-complaint').href = `track.html?id=${data.id}`;
+
+                // Reasoning Bars
+                const renderBar = (idSuffix, value) => {
+                    const val = value !== undefined ? value : 0;
+                    document.getElementById(`val-${idSuffix}`).innerText = `${val} pts`;
+                    setTimeout(() => {
+                        document.getElementById(`bar-${idSuffix}`).style.width = `${val}%`;
+                        if (val > 80) {
+                            document.getElementById(`bar-${idSuffix}`).classList.remove('bg-secondary');
+                            document.getElementById(`bar-${idSuffix}`).classList.add('bg-error');
+                        }
+                    }, 300);
+                };
+
+                renderBar('image', data.image_confidence);
+                renderBar('text', data.text_urgency);
+                renderBar('loc', data.location_importance);
+                renderBar('dup', data.duplicate_score);
+
+            } catch (e) {
+                console.error('Error parsing result data', e);
+                document.getElementById('empty-state').classList.remove('hidden');
+                document.getElementById('analysis-view').classList.add('hidden');
+            }
+        })();
+    </script>
+</body>
+</html>

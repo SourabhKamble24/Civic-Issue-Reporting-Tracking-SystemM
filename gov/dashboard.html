@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command Center - CivicAI</title>
+  <link rel="stylesheet" href="../src/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-surface text-navy h-screen flex font-sans antialiased overflow-hidden">
+  
+  <!-- Sidebar -->
+  <div id="sidebar-container" class="shrink-0 z-40 hidden md:block"></div>
+
+  <!-- Mobile Nav Toggle -->
+  <button id="mobile-menu-btn" class="md:hidden absolute top-4 left-4 z-50 bg-white p-2 rounded-lg shadow text-navy">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
+
+  <div id="mobile-sidebar" class="md:hidden fixed inset-0 z-40 bg-black/50 hidden transition-opacity">
+    <div id="mobile-sidebar-inner" class="w-64 h-full bg-white transform -translate-x-full transition-transform"></div>
+  </div>
+
+  <!-- Main Workspace -->
+  <main class="flex-grow flex flex-col h-full overflow-y-auto bg-slate-50 relative">
+    
+    <!-- Header -->
+    <header class="bg-white border-b border-surface-border px-6 md:px-10 py-5 flex flex-col md:flex-row justify-between md:items-center gap-4 sticky top-0 z-30 ml-12 md:ml-0">
+      <div>
+        <h1 class="text-2xl font-black text-navy tracking-tight">AI Civic Command Center</h1>
+        <p class="text-sm text-slate-500 font-medium" id="header-date">Loading date...</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <button id="btn-refresh" class="btn-secondary px-4 py-2 flex items-center gap-2 text-sm shadow-sm bg-white">
+          <span class="material-symbols-outlined text-[18px]">refresh</span> Refresh Data
+        </button>
+      </div>
+    </header>
+
+    <div class="p-6 md:p-10 space-y-8 max-w-[1600px] mx-auto w-full">
+      
+      <!-- Loading State -->
+      <div id="dashboard-loading" class="flex flex-col items-center justify-center py-20">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-action mb-4"></div>
+        <p class="text-slate-600 font-bold">Initializing Command Center...</p>
+      </div>
+
+      <!-- Dashboard Content -->
+      <div id="dashboard-content" class="hidden space-y-8">
+        
+        <!-- Top KPIs -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <div class="bg-white rounded-2xl border border-surface-border p-5 shadow-sm relative overflow-hidden group">
+            <div class="absolute right-0 top-0 w-24 h-24 bg-status-critical opacity-5 rounded-bl-full group-hover:scale-110 transition-transform"></div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Critical Issues</p>
+            <div class="flex items-end gap-3">
+              <h3 class="text-4xl font-black text-navy" id="kpi-critical">0</h3>
+              <div class="text-status-critical flex items-center bg-status-critical/10 px-2 py-0.5 rounded text-xs font-bold mb-1">Active</div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-2xl border border-surface-border p-5 shadow-sm relative overflow-hidden group">
+            <div class="absolute right-0 top-0 w-24 h-24 bg-status-high opacity-5 rounded-bl-full group-hover:scale-110 transition-transform"></div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">High Priority</p>
+            <div class="flex items-end gap-3">
+              <h3 class="text-4xl font-black text-navy" id="kpi-high">0</h3>
+              <div class="text-status-high flex items-center bg-status-high/10 px-2 py-0.5 rounded text-xs font-bold mb-1">Active</div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-2xl border border-surface-border p-5 shadow-sm relative overflow-hidden group">
+            <div class="absolute right-0 top-0 w-24 h-24 bg-status-medium opacity-5 rounded-bl-full group-hover:scale-110 transition-transform"></div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Medium Priority</p>
+            <div class="flex items-end gap-3">
+              <h3 class="text-4xl font-black text-navy" id="kpi-medium">0</h3>
+              <div class="text-status-medium flex items-center bg-status-medium/10 px-2 py-0.5 rounded text-xs font-bold mb-1">Active</div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-2xl border border-surface-border p-5 shadow-sm relative overflow-hidden group">
+            <div class="absolute right-0 top-0 w-24 h-24 bg-status-resolved opacity-5 rounded-bl-full group-hover:scale-110 transition-transform"></div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Resolved Issues</p>
+            <div class="flex items-end gap-3">
+              <h3 class="text-4xl font-black text-navy" id="kpi-resolved">0</h3>
+              <div class="text-status-resolved flex items-center bg-status-resolved/10 px-2 py-0.5 rounded text-xs font-bold mb-1">Total</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          
+          <!-- LEFT COL: Map & Queue -->
+          <div class="xl:col-span-2 space-y-8">
+            
+            <!-- Live Map Preview -->
+            <div class="bg-white rounded-2xl border border-surface-border shadow-sm overflow-hidden flex flex-col h-[400px]">
+              <div class="p-4 border-b border-surface-border flex justify-between items-center bg-slate-50/50">
+                <h3 class="font-bold text-navy flex items-center gap-2">
+                  <span class="material-symbols-outlined text-action">public</span> Live Infrastructure Map
+                </h3>
+                <a href="../map.html" class="text-sm font-bold text-action hover:underline flex items-center gap-1">
+                  View Full Map <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+                </a>
+              </div>
+              <div id="mini-map" class="flex-grow w-full z-0 relative"></div>
+            </div>
+
+            <!-- Priority Queue Preview -->
+            <div class="bg-white rounded-2xl border border-surface-border shadow-sm overflow-hidden">
+              <div class="p-5 border-b border-surface-border flex justify-between items-center">
+                <h3 class="font-bold text-navy flex items-center gap-2">
+                  <span class="material-symbols-outlined text-status-critical">priority_high</span> AI Priority Queue
+                </h3>
+                <span class="text-xs font-bold bg-slate-100 text-slate-500 px-2 py-1 rounded">Top 5 Active</span>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm whitespace-nowrap">
+                  <thead class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b border-surface-border">
+                    <tr>
+                      <th class="px-5 py-3">ID</th>
+                      <th class="px-5 py-3">Issue</th>
+                      <th class="px-5 py-3">Severity Score</th>
+                      <th class="px-5 py-3">Priority</th>
+                    </tr>
+                  </thead>
+                  <tbody id="queue-body" class="divide-y divide-surface-border">
+                    <!-- Injected via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT COL: Insights & Analytics -->
+          <div class="space-y-8">
+            
+            <!-- System Insights -->
+            <div class="bg-navy rounded-2xl p-6 text-white relative overflow-hidden shadow-card">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-action opacity-20 rounded-full blur-2xl"></div>
+              <div class="relative z-10">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2 text-action">
+                  <span class="material-symbols-outlined">insights</span> System Insights
+                </h3>
+                <ul class="space-y-3 text-sm text-slate-300" id="insights-list">
+                  <li class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-action shrink-0">check_circle</span>
+                    Analyzing latest data...
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Department Placeholder -->
+            <div class="bg-white rounded-2xl border border-surface-border shadow-sm p-6 text-center">
+              <div class="w-12 h-12 bg-slate-50 rounded-full border border-slate-200 flex items-center justify-center mx-auto mb-3 text-slate-400">
+                <span class="material-symbols-outlined text-2xl">domain</span>
+              </div>
+              <h3 class="font-bold text-navy mb-1">Department Performance</h3>
+              <p class="text-xs text-slate-500 max-w-[200px] mx-auto">Department performance data will appear when department assignment data is available.</p>
+            </div>
+
+            <!-- Trend Chart -->
+            <div class="bg-white rounded-2xl border border-surface-border shadow-sm p-5">
+              <h3 class="text-sm font-bold text-navy mb-4">Issues Reported (Last 7 Days)</h3>
+              <div class="h-40 w-full relative">
+                <canvas id="trendChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Category Summary -->
+            <div class="bg-white rounded-2xl border border-surface-border shadow-sm p-5">
+              <h3 class="text-sm font-bold text-navy mb-4">Top Categories</h3>
+              <div class="space-y-3" id="category-summary-list">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- External Libraries -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="../src/js/main.js"></script>
+  <script type="module">
+    import { CATEGORIES } from '../src/js/ai-models.js';
+
+    (async function() {
+      
+      // 1. Auth & Sidebar setup
+      const token = localStorage.getItem('auth_token');
+      const role = localStorage.getItem('user_role');
+      
+      if (!token || (role !== 'admin' && role !== 'gov' && role !== 'government')) {
+        window.location.href = '../login.html';
+        return;
+      }
+
+      // Inject Sidebar
+      const sidebarHtml = window.Components.GovernmentSidebar('dashboard');
+      document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+      document.getElementById('mobile-sidebar-inner').innerHTML = sidebarHtml;
+
+      // Mobile menu toggle
+      const mobBtn = document.getElementById('mobile-menu-btn');
+      const mobSidebar = document.getElementById('mobile-sidebar');
+      const mobInner = document.getElementById('mobile-sidebar-inner');
+      
+      mobBtn.addEventListener('click', () => {
+        mobSidebar.classList.remove('hidden');
+        setTimeout(() => {
+          mobSidebar.classList.remove('bg-black/0');
+          mobInner.classList.remove('-translate-x-full');
+        }, 10);
+      });
+      
+      mobSidebar.addEventListener('click', (e) => {
+        if (e.target === mobSidebar) {
+          mobInner.classList.add('-translate-x-full');
+          setTimeout(() => mobSidebar.classList.add('hidden'), 300);
+        }
+      });
+
+      // Date Header
+      const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('header-date').innerText = new Date().toLocaleDateString('en-US', opts);
+
+      // Refresh Button
+      document.getElementById('btn-refresh').addEventListener('click', () => {
+        document.getElementById('dashboard-content').classList.add('hidden');
+        document.getElementById('dashboard-loading').classList.remove('hidden');
+        fetchData();
+      });
+
+      // 2. Map Initialization (Mini Map)
+      const miniMap = L.map('mini-map', { zoomControl: false }).setView([28.6139, 77.2090], 11);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap',
+        maxZoom: 19
+      }).addTo(miniMap);
+      
+      let mapMarkers = [];
+
+      // Helper functions
+      const getPriorityColor = (p) => {
+        if (p === 'Critical') return '#ef4444';
+        if (p === 'High') return '#f97316';
+        if (p === 'Medium') return '#eab308';
+        if (p === 'Low') return '#22c55e';
+        return '#94a3b8';
+      };
+
+      const getBadgeClass = (p) => {
+        if (p === 'Critical') return 'bg-status-critical/10 text-status-critical border border-status-critical/20';
+        if (p === 'High') return 'bg-status-high/10 text-status-high border border-status-high/20';
+        if (p === 'Medium') return 'bg-status-medium/10 text-status-medium border border-status-medium/20';
+        return 'bg-status-resolved/10 text-status-resolved border border-status-resolved/20';
+      };
+
+      // 3. Fetch Data
+      const fetchData = async () => {
+        try {
+          const response = await fetch('http://127.0.0.1:5005/api/complaints', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          
+          if (!response.ok) throw new Error('API Error');
+          const allComplaints = await response.json();
+          
+          renderDashboard(allComplaints);
+          
+        } catch (err) {
+          console.error(err);
+          document.getElementById('dashboard-loading').innerHTML = `
+            <div class="text-status-critical mb-2"><span class="material-symbols-outlined text-4xl">cloud_off</span></div>
+            <p class="text-navy font-bold">Failed to load Command Center data.</p>
+          `;
+        }
+      };
+
+      // 4. Render Dashboard
+      const renderDashboard = (data) => {
+        
+        // Hide loader, show content
+        document.getElementById('dashboard-loading').classList.add('hidden');
+        document.getElementById('dashboard-content').classList.remove('hidden');
+
+        // KPIs
+        const active = data.filter(c => c.status !== 'resolved');
+        const critical = active.filter(c => c.priority === 'Critical').length;
+        const high = active.filter(c => c.priority === 'High').length;
+        const medium = active.filter(c => c.priority === 'Medium').length;
+        const resolved = data.filter(c => c.status === 'resolved').length;
+
+        document.getElementById('kpi-critical').innerText = critical;
+        document.getElementById('kpi-high').innerText = high;
+        document.getElementById('kpi-medium').innerText = medium;
+        document.getElementById('kpi-resolved').innerText = resolved;
+
+        // Insights Panel
+        const maxScore = Math.max(0, ...active.map(c => c.severity_score || 0));
+        let insightsHtml = '';
+        if (critical > 0) {
+          insightsHtml += `<li class="flex items-start gap-2"><span class="material-symbols-outlined text-[18px] text-status-critical shrink-0">warning</span> <span class="font-bold text-white">${critical} Critical complaints</span> currently require immediate attention.</li>`;
+        }
+        if (high > 0) {
+          insightsHtml += `<li class="flex items-start gap-2"><span class="material-symbols-outlined text-[18px] text-status-high shrink-0">priority_high</span> <span class="font-bold text-white">${high} High priority issues</span> are pending in the queue.</li>`;
+        }
+        insightsHtml += `<li class="flex items-start gap-2"><span class="material-symbols-outlined text-[18px] text-action shrink-0">monitoring</span> The highest severity score actively reported is <span class="font-bold text-white">${maxScore}</span>.</li>`;
+        
+        document.getElementById('insights-list').innerHTML = insightsHtml;
+
+        // Mini Map
+        mapMarkers.forEach(m => miniMap.removeLayer(m));
+        mapMarkers = [];
+        
+        active.slice(0, 100).forEach(issue => {
+          if (issue.lat && issue.lng) {
+            const m = L.circleMarker([issue.lat, issue.lng], {
+              radius: 6,
+              fillColor: getPriorityColor(issue.priority),
+              color: '#fff',
+              weight: 2,
+              opacity: 1,
+              fillOpacity: 0.9
+            }).addTo(miniMap);
+            mapMarkers.push(m);
+          }
+        });
+        
+        if (mapMarkers.length > 0) {
+          const group = new L.featureGroup(mapMarkers);
+          miniMap.fitBounds(group.getBounds(), { padding: [20, 20], maxZoom: 13 });
+        }
+        setTimeout(() => miniMap.invalidateSize(), 300);
+
+        // Priority Queue (Top 5 active)
+        const sortedQueue = [...active].sort((a, b) => (b.severity_score || 0) - (a.severity_score || 0)).slice(0, 5);
+        
+        if (sortedQueue.length === 0) {
+          document.getElementById('queue-body').innerHTML = `<tr><td colspan="4" class="px-5 py-8 text-center text-slate-500">No active complaints found.</td></tr>`;
+        } else {
+          document.getElementById('queue-body').innerHTML = sortedQueue.map(issue => {
+            const catLabel = CATEGORIES.find(c => c.id === issue.category_id)?.label || issue.category_id;
+            const shortId = issue.id.toString().padStart(4, '0');
+            return `
+              <tr class="hover:bg-slate-50 transition-colors group cursor-pointer" onclick="window.location.href='../issue-detail.html?id=${issue.id}'" title="View details (Phase 10)">
+                <td class="px-5 py-3 border-none">
+                  <span class="font-mono text-xs font-bold text-slate-500">REP-${shortId}</span>
+                </td>
+                <td class="px-5 py-3 border-none">
+                  <div class="font-bold text-navy group-hover:text-action transition-colors">${catLabel}</div>
+                </td>
+                <td class="px-5 py-3 border-none">
+                  <div class="flex items-center gap-1 font-bold text-slate-700">
+                    <span class="material-symbols-outlined text-[16px] text-action">local_fire_department</span>
+                    ${issue.severity_score || 0}
+                  </div>
+                </td>
+                <td class="px-5 py-3 border-none">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getBadgeClass(issue.priority)}">
+                    ${issue.priority || 'Unknown'}
+                  </span>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        // Category Summary (Manual small bars)
+        const catCounts = {};
+        data.forEach(c => { catCounts[c.category_id] = (catCounts[c.category_id] || 0) + 1; });
+        const sortedCats = Object.entries(catCounts).sort((a, b) => b[1] - a[1]).slice(0, 4);
+        
+        let maxCat = sortedCats.length > 0 ? sortedCats[0][1] : 1;
+        
+        document.getElementById('category-summary-list').innerHTML = sortedCats.map(([cat, count]) => {
+          const catLabel = CATEGORIES.find(c => c.id === cat)?.label || cat;
+          const pct = Math.max(5, (count / maxCat) * 100);
+          return `
+            <div>
+              <div class="flex justify-between text-xs mb-1 font-medium text-slate-600">
+                <span>${catLabel}</span>
+                <span class="font-bold text-navy">${count}</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                <div class="bg-action h-full rounded-full" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Trend Chart
+        renderTrendChart(data);
+      };
+
+      let trendChartInstance = null;
+      const renderTrendChart = (data) => {
+        const ctx = document.getElementById('trendChart');
+        if (!ctx) return;
+        
+        if (trendChartInstance) trendChartInstance.destroy();
+
+        // Generate last 7 days keys
+        const dates = {};
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const dateStr = d.toISOString().split('T')[0];
+          dates[dateStr] = 0;
+        }
+
+        // Group data
+        data.forEach(c => {
+          if (!c.created_at && !c.date_reported) return;
+          const dateStr = new Date(c.created_at || c.date_reported).toISOString().split('T')[0];
+          if (dates[dateStr] !== undefined) {
+            dates[dateStr]++;
+          }
+        });
+
+        const labels = Object.keys(dates).map(d => {
+          const date = new Date(d);
+          return date.toLocaleDateString('en-US', { weekday: 'short' });
+        });
+        const values = Object.values(dates);
+
+        trendChartInstance = new Chart(ctx.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Issues Reported',
+              data: values,
+              borderColor: '#0284c7', // action color
+              backgroundColor: 'rgba(2, 132, 199, 0.1)',
+              borderWidth: 2,
+              tension: 0.4,
+              fill: true,
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: '#0284c7',
+              pointRadius: 3,
+              pointHoverRadius: 5
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: '#1e293b',
+                titleFont: { family: 'Inter', size: 12 },
+                bodyFont: { family: 'Inter', size: 12 },
+                padding: 10,
+                displayColors: false,
+                callbacks: {
+                  title: () => null,
+                  label: (ctx) => `${ctx.parsed.y} Issues`
+                }
+              }
+            },
+            scales: {
+              y: { 
+                beginAtZero: true, 
+                ticks: { precision: 0, font: { family: 'Inter', size: 10 }, color: '#94a3b8' },
+                grid: { color: '#f1f5f9', drawBorder: false }
+              },
+              x: {
+                ticks: { font: { family: 'Inter', size: 10 }, color: '#94a3b8' },
+                grid: { display: false, drawBorder: false }
+              }
+            }
+          }
+        });
+      };
+
+      // Init
+      fetchData();
+    })();
+  </script>
+</body>
+</html>

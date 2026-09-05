@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics - CivicAI</title>
+  <link rel="stylesheet" href="./src/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-surface text-navy h-screen flex font-sans antialiased overflow-hidden">
+  
+  <!-- Sidebar -->
+  <div id="sidebar-container" class="shrink-0 z-40 hidden md:block"></div>
+
+  <!-- Mobile Nav Toggle -->
+  <button id="mobile-menu-btn" class="md:hidden absolute top-4 left-4 z-50 bg-white p-2 rounded-lg shadow text-navy">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
+
+  <div id="mobile-sidebar" class="md:hidden fixed inset-0 z-40 bg-black/50 hidden transition-opacity">
+    <div id="mobile-sidebar-inner" class="w-64 h-full bg-white transform -translate-x-full transition-transform"></div>
+  </div>
+
+  <!-- Main Workspace -->
+  <main class="flex-grow flex flex-col h-full overflow-y-auto bg-slate-50 relative">
+    
+    <!-- Header -->
+    <header class="bg-white border-b border-surface-border px-6 md:px-10 py-5 flex flex-col md:flex-row justify-between md:items-center gap-4 sticky top-0 z-20 shadow-sm md:ml-0 ml-12">
+      <div>
+        <h1 class="text-2xl font-black text-navy tracking-tight flex items-center gap-2">
+          <span class="material-symbols-outlined text-action">analytics</span> Performance Analytics
+        </h1>
+        <p class="text-sm text-slate-500 font-medium">Real-time data visualization of civic infrastructure issues.</p>
+      </div>
+      
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <!-- Date Filter -->
+        <select id="date-filter" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-bold rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-action">
+          <option value="all">All Time</option>
+          <option value="7">Last 7 Days</option>
+          <option value="30">Last 30 Days</option>
+        </select>
+        
+        <button id="btn-export" class="btn-primary px-4 py-2 flex items-center gap-2 text-sm shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">download</span> Export Report (CSV)
+        </button>
+      </div>
+    </header>
+
+    <div class="p-6 md:p-10 space-y-8 max-w-[1600px] mx-auto w-full">
+      
+      <!-- Loading State -->
+      <div id="analytics-loading" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-surface-border">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-action mb-4"></div>
+        <p class="text-slate-600 font-bold">Processing analytics data...</p>
+      </div>
+
+      <div id="analytics-content" class="hidden space-y-8">
+        
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div class="bg-white p-5 rounded-xl border border-surface-border shadow-sm">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Total Issues</span>
+            <span id="kpi-total" class="text-3xl font-black text-navy">0</span>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-surface-border shadow-sm">
+            <span class="text-xs font-bold text-status-resolved uppercase tracking-wider block mb-1">Resolved</span>
+            <span id="kpi-resolved" class="text-3xl font-black text-status-resolved">0</span>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-surface-border shadow-sm">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Open</span>
+            <span id="kpi-open" class="text-3xl font-black text-slate-500">0</span>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-surface-border shadow-sm">
+            <span class="text-xs font-bold text-status-medium uppercase tracking-wider block mb-1">In Progress</span>
+            <span id="kpi-prog" class="text-3xl font-black text-status-medium">0</span>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-surface-border shadow-sm bg-gradient-to-br from-action/10 to-transparent">
+            <span class="text-xs font-bold text-action uppercase tracking-wider block mb-1">Avg AI Severity Score</span>
+            <div class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-[20px] text-action">memory</span>
+              <span id="kpi-avg-score" class="text-3xl font-black text-action">0</span><span class="text-sm font-bold text-slate-400 mt-2">/100</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warning / Missing Features Panel -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-3 text-sm text-slate-600">
+          <span class="material-symbols-outlined text-slate-400">info</span>
+          <div>
+            <span class="font-bold">Resolution Time:</span> Not available. Resolution timestamps are not currently stored in the backend. 
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Priority Distribution -->
+          <div class="bg-white p-6 rounded-2xl border border-surface-border shadow-sm flex flex-col">
+            <h2 class="text-sm font-bold text-navy uppercase tracking-wider mb-6 flex items-center gap-2">
+              <span class="material-symbols-outlined text-action">donut_large</span> Priority Distribution
+            </h2>
+            <div class="flex-grow flex items-center justify-center relative min-h-[250px]">
+              <canvas id="chart-priority"></canvas>
+            </div>
+          </div>
+
+          <!-- Status Distribution -->
+          <div class="bg-white p-6 rounded-2xl border border-surface-border shadow-sm flex flex-col">
+            <h2 class="text-sm font-bold text-navy uppercase tracking-wider mb-6 flex items-center gap-2">
+              <span class="material-symbols-outlined text-action">pie_chart</span> Resolution Status
+            </h2>
+            <div class="flex-grow flex items-center justify-center relative min-h-[250px]">
+              <canvas id="chart-status"></canvas>
+            </div>
+          </div>
+
+          <!-- Category Distribution -->
+          <div class="bg-white p-6 rounded-2xl border border-surface-border shadow-sm lg:col-span-2">
+            <h2 class="text-sm font-bold text-navy uppercase tracking-wider mb-6 flex items-center gap-2">
+              <span class="material-symbols-outlined text-action">bar_chart</span> Issues by Category
+            </h2>
+            <div class="relative min-h-[300px]">
+              <canvas id="chart-category"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="./src/js/main.js"></script>
+  <script type="module">
+    import { CATEGORIES } from './src/js/ai-models.js';
+
+    (async function() {
+      
+      const token = localStorage.getItem('auth_token');
+      const role = localStorage.getItem('user_role');
+      
+      // Allow gov, admin, government
+      if (!token || (role !== 'admin' && role !== 'gov' && role !== 'government')) {
+        window.location.href = './login.html';
+        return;
+      }
+
+      // Sidebar
+      const sidebarHtml = window.Components.GovernmentSidebar('analytics');
+      document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+      document.getElementById('mobile-sidebar-inner').innerHTML = sidebarHtml;
+
+      // Mobile menu
+      const mobBtn = document.getElementById('mobile-menu-btn');
+      const mobSidebar = document.getElementById('mobile-sidebar');
+      const mobInner = document.getElementById('mobile-sidebar-inner');
+      mobBtn.addEventListener('click', () => {
+        mobSidebar.classList.remove('hidden');
+        setTimeout(() => {
+          mobSidebar.classList.remove('bg-black/0');
+          mobInner.classList.remove('-translate-x-full');
+        }, 10);
+      });
+      mobSidebar.addEventListener('click', (e) => {
+        if (e.target === mobSidebar) {
+          mobInner.classList.add('-translate-x-full');
+          setTimeout(() => mobSidebar.classList.add('hidden'), 300);
+        }
+      });
+
+      let allComplaints = [];
+      let chartInstances = {};
+
+      const fetchData = async () => {
+        try {
+          const response = await fetch('http://127.0.0.1:5005/api/complaints', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (!response.ok) throw new Error('Failed to fetch data');
+          allComplaints = await response.json();
+          renderAnalytics();
+        } catch (err) {
+          console.error(err);
+          document.getElementById('analytics-loading').innerHTML = `
+            <div class="text-status-critical mb-2"><span class="material-symbols-outlined text-4xl">cloud_off</span></div>
+            <p class="text-navy font-bold">Failed to load analytics data.</p>
+          `;
+        }
+      };
+
+      const filterByDate = (complaints, filterVal) => {
+        if (filterVal === 'all') return complaints;
+        
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - parseInt(filterVal));
+        
+        return complaints.filter(c => {
+          const d = new Date(c.date_reported || c.created_at);
+          if (isNaN(d)) return true; // keep if unknown
+          return d >= cutoff;
+        });
+      };
+
+      const renderAnalytics = () => {
+        const filterVal = document.getElementById('date-filter').value;
+        const data = filterByDate(allComplaints, filterVal);
+
+        document.getElementById('analytics-loading').classList.add('hidden');
+        document.getElementById('analytics-content').classList.remove('hidden');
+
+        let tOpen = 0, tProg = 0, tRes = 0;
+        let totalScore = 0;
+        let validScoresCount = 0;
+        let pCounts = { 'Critical': 0, 'High': 0, 'Medium': 0, 'Low': 0 };
+        let catCounts = {};
+
+        data.forEach(c => {
+          // Status
+          const s = (c.status || 'open').toLowerCase();
+          if (s === 'resolved') tRes++;
+          else if (s === 'in progress' || s === 'in_progress') tProg++;
+          else tOpen++;
+
+          // Score
+          if (c.severity_score !== undefined && c.severity_score !== null) {
+            totalScore += c.severity_score;
+            validScoresCount++;
+          }
+
+          // Priority
+          const p = c.priority || 'Low';
+          if (pCounts[p] !== undefined) pCounts[p]++;
+          else pCounts['Low']++;
+
+          // Category
+          const cat = c.category_id || 'unknown';
+          if (!catCounts[cat]) catCounts[cat] = 0;
+          catCounts[cat]++;
+        });
+
+        const avgScore = validScoresCount > 0 ? Math.round(totalScore / validScoresCount) : 0;
+
+        // Update KPIs
+        document.getElementById('kpi-total').innerText = data.length;
+        document.getElementById('kpi-resolved').innerText = tRes;
+        document.getElementById('kpi-open').innerText = tOpen;
+        document.getElementById('kpi-prog').innerText = tProg;
+        document.getElementById('kpi-avg-score').innerText = avgScore;
+
+        // Setup Charts
+        const destroyChart = (id) => {
+          if (chartInstances[id]) chartInstances[id].destroy();
+        };
+
+        // 1. Priority Chart
+        destroyChart('chart-priority');
+        chartInstances['chart-priority'] = new Chart(document.getElementById('chart-priority').getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Critical', 'High', 'Medium', 'Low'],
+            datasets: [{
+              data: [pCounts['Critical'], pCounts['High'], pCounts['Medium'], pCounts['Low']],
+              backgroundColor: ['#ef4444', '#f97316', '#eab308', '#22c55e'],
+              borderWidth: 0
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // 2. Status Chart
+        destroyChart('chart-status');
+        chartInstances['chart-status'] = new Chart(document.getElementById('chart-status').getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Open', 'In Progress', 'Resolved'],
+            datasets: [{
+              data: [tOpen, tProg, tRes],
+              backgroundColor: ['#64748b', '#eab308', '#22c55e'],
+              borderWidth: 0
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // 3. Category Chart
+        const catLabels = Object.keys(catCounts).map(id => CATEGORIES.find(c => c.id === id)?.label || id);
+        const catData = Object.values(catCounts);
+
+        destroyChart('chart-category');
+        chartInstances['chart-category'] = new Chart(document.getElementById('chart-category').getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: catLabels,
+            datasets: [{
+              label: 'Issues',
+              data: catData,
+              backgroundColor: '#3b82f6',
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+          }
+        });
+      };
+
+      // Export logic
+      document.getElementById('btn-export').addEventListener('click', () => {
+        if (allComplaints.length === 0) return;
+        
+        const filterVal = document.getElementById('date-filter').value;
+        const dataToExport = filterByDate(allComplaints, filterVal);
+
+        const headers = ['Complaint ID', 'Category', 'Status', 'Priority', 'Severity Score', 'Date Reported', 'Latitude', 'Longitude'];
+        
+        const rows = dataToExport.map(c => [
+          `REP-${c.id}`,
+          c.category_id || 'unknown',
+          c.status || 'open',
+          c.priority || 'Low',
+          c.severity_score || 0,
+          c.date_reported || c.created_at || 'unknown',
+          c.lat || '',
+          c.lng || ''
+        ]);
+
+        let csvContent = "data:text/csv;charset=utf-8," 
+          + headers.join(",") + "\n"
+          + rows.map(e => e.join(",")).join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `civicai_report_${new Date().getTime()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+
+      // Filter Listener
+      document.getElementById('date-filter').addEventListener('change', renderAnalytics);
+
+      fetchData();
+    })();
+  </script>
+</body>
+</html>

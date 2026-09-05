@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicTriage - Authentication</title>
+  <link rel="stylesheet" href="./src/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-navy-dark min-h-screen relative font-sans text-white overflow-x-hidden">
+  
+  <!-- Background Shader -->
+  <div class="fixed inset-0 z-0 bg-navy-dark pointer-events-none opacity-90">
+    <div class="w-full h-full object-cover mix-blend-overlay" style="display:block;">
+      <canvas id="shader-canvas-ANIMATION_33" style="display:block;width:100%;height:100%"></canvas>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="absolute top-0 left-0 right-0 z-50 w-full px-6 md:px-12 py-6 flex justify-between items-center">
+    <div class="flex items-center gap-2">
+      <!-- CivicTriage Logo -->
+      <img alt="CivicTriage Logo" class="h-8 w-8 object-contain rounded-md bg-white p-1" src="/logo.png"/>
+      <div class="flex flex-col">
+        <span class="font-semibold text-2xl text-white leading-none">CivicTriage</span>
+        <span class="font-semibold text-xs text-slate-300">Civic Technology Platform</span>
+      </div>
+    </div>
+    <button aria-label="Toggle theme" class="p-2 rounded-full hover:bg-white/10 transition-colors duration-200 text-white group">
+      <span class="material-symbols-outlined group-hover:scale-110 transition-transform">light_mode</span>
+    </button>
+  </header>
+
+  <!-- Main Content -->
+  <main class="relative z-10 flex flex-col items-center justify-center min-h-screen w-full px-4 py-12">
+    
+    <!-- Authentication Card -->
+    <div class="w-full max-w-[448px] bg-white border border-slate-300 rounded-xl shadow-modal p-6 lg:p-8 backdrop-blur-sm bg-opacity-95">
+      
+      <!-- Header Section -->
+      <div class="mb-6 text-center md:text-left">
+        <h1 class="font-semibold text-2xl md:text-3xl text-navy mb-1">Welcome Back</h1>
+        <p class="text-base text-slate-600">Sign in to your CivicTriage account.</p>
+        <p class="font-medium text-sm text-slate-500 mt-1">Access your civic services and management workspace.</p>
+      </div>
+      
+      <!-- Form -->
+      <form id="loginForm" class="space-y-4">
+        <!-- Email Field -->
+        <div class="flex flex-col gap-1">
+          <label class="font-medium text-sm text-navy" for="email">Email Address</label>
+          <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-action transition-colors">
+              <span class="material-symbols-outlined text-[20px]">mail</span>
+            </div>
+            <input class="w-full pl-10 pr-4 py-2 bg-white border-[1.5px] border-slate-300 rounded-lg text-base text-navy placeholder-slate-400 focus:border-action focus:ring-1 focus:ring-action transition-colors outline-none" id="email" name="email" placeholder="citizen@example.com" required type="email"/>
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="flex flex-col gap-1">
+          <div class="flex justify-between items-center">
+            <label class="font-medium text-sm text-navy" for="password">Password</label>
+            <a class="font-medium text-sm text-action hover:text-navy transition-colors" href="#" id="forgotPasswordBtn">Forgot password?</a>
+          </div>
+          <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-action transition-colors">
+              <span class="material-symbols-outlined text-[20px]">lock</span>
+            </div>
+            <input class="w-full pl-10 pr-10 py-2 bg-white border-[1.5px] border-slate-300 rounded-lg text-base text-navy placeholder-slate-400 focus:border-action focus:ring-1 focus:ring-action transition-colors outline-none" id="password" name="password" placeholder="••••••••" required type="password"/>
+            <button aria-label="Toggle password visibility" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-navy focus:outline-none" type="button">
+              <span class="material-symbols-outlined text-[20px]" id="eyeIcon">visibility</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Primary Action -->
+        <button id="submitBtn" class="w-full bg-action text-white py-3 rounded-lg font-medium text-sm flex justify-center items-center gap-2 hover:bg-action-hover hover:shadow-card active:scale-[0.98] transition-all duration-200 mt-6" type="submit">
+          Sign In
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="relative flex py-6 items-center">
+        <div class="flex-grow border-t border-slate-300"></div>
+        <span class="flex-shrink-0 mx-4 font-semibold text-xs text-slate-400 uppercase tracking-wider">Or</span>
+        <div class="flex-grow border-t border-slate-300"></div>
+      </div>
+
+      <!-- Social Auth -->
+      <button id="googleAuthBtn" class="w-full bg-white border border-slate-300 text-navy py-3 rounded-lg font-medium text-sm flex justify-center items-center gap-2 hover:bg-slate-50 hover:border-slate-400 hover:shadow-card active:scale-[0.98] transition-all duration-200 mb-4" type="button">
+        <svg class="w-5 h-5" viewBox="0 0 24 24">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+        </svg>
+        Continue with Google
+      </button>
+
+      <!-- Registration Link -->
+      <p class="text-center font-normal text-base text-slate-600">
+        Don't have an account? <a class="text-action font-medium hover:underline hover:text-navy transition-colors" href="/register.html">Register here</a>
+      </p>
+
+      <!-- Educational Footer -->
+      <div class="mt-8 pt-6 border-t border-slate-300">
+        <div class="flex items-center justify-center gap-1 text-slate-400 mb-2">
+          <span class="material-symbols-outlined text-[20px]">person</span>
+          <span class="material-symbols-outlined text-[16px]">sync_alt</span>
+          <span class="material-symbols-outlined text-[20px]">assured_workload</span>
+        </div>
+        <p class="text-center font-semibold text-xs text-slate-500 max-w-[280px] mx-auto leading-relaxed">
+          One platform connecting civic issues with the teams responsible for resolving them.
+        </p>
+      </div>
+    </div>
+
+    <!-- Security Indicator -->
+    <div class="mt-6 flex items-center justify-center gap-1 text-slate-300 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
+      <span class="material-symbols-outlined text-[16px]">lock_person</span>
+      <span class="font-semibold text-xs">Secure CivicTriage Authentication</span>
+    </div>
+    
+  </main>
+
+  <!-- Notice for non-functional elements -->
+  <div id="auth-alert" class="fixed top-4 left-1/2 -translate-x-1/2 bg-status-medium text-white px-6 py-3 rounded-xl shadow-modal font-medium text-sm flex items-center gap-2 transform -translate-y-full opacity-0 transition-all duration-300 z-50">
+    <span class="material-symbols-outlined">info</span>
+    <span id="auth-alert-msg">Feature not configured yet.</span>
+  </div>
+
+  <script type="module" src="./src/js/main.js"></script>
+  <script>
+    // --- WebGL Shader Script (From Stitch) ---
+    (function() {
+      const canvas = document.getElementById('shader-canvas-ANIMATION_33');
+
+      function syncSize() {
+        const w = canvas.clientWidth  || 1280;
+        const h = canvas.clientHeight || 720;
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width  = w;
+          canvas.height = h;
+        }
+      }
+      if (typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(syncSize).observe(canvas);
+      }
+      syncSize();
+
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (!gl) return;
+      const vs = `attribute vec2 a_position;
+    varying vec2 v_texCoord;
+    void main() {
+      v_texCoord = a_position * 0.5 + 0.5;
+      gl_Position = vec4(a_position, 0.0, 1.0);
+    }`;
+      const fs = `precision highp float;
+    varying vec2 v_texCoord;
+    uniform float u_time;
+    uniform vec2 u_resolution;
+
+    float network(vec2 uv, float t) {
+        vec2 p = uv * 8.0;
+        vec2 id = floor(p);
+        vec2 gv = fract(p) - 0.5;
+        
+        float m = 0.0;
+        for(float y=-1.0; y<=1.0; y++) {
+            for(float x=-1.0; x<=1.0; x++) {
+                vec2 offs = vec2(x, y);
+                vec2 n_id = id + offs;
+                
+                // Pseudo-random position for node based on city grid logic
+                float r = fract(sin(dot(n_id, vec2(12.9898, 78.233))) * 43758.5453);
+                vec2 p_node = offs + vec2(sin(t*r), cos(t*r)) * 0.35;
+                
+                float d = length(gv - p_node);
+                m += smoothstep(0.04, 0.02, d) * 0.6; // Urban nodes
+                
+                // Connect lines representing infrastructure links
+                if(d < 0.6) {
+                    m += (1.0 - d/0.6) * 0.12 * smoothstep(0.8, 0.2, d);
+                }
+            }
+        }
+        return m;
+    }
+
+    void main() {
+        vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+        
+        // Deep navy atmospheric palette for government-grade trust
+        vec3 color1 = vec3(0.027, 0.078, 0.149); // #071426
+        vec3 color2 = vec3(0.043, 0.106, 0.196); // #0B1B32
+        vec3 base = mix(color1, color2, uv.y + 0.5);
+        
+        // Procedural urban network pattern
+        float pattern = network(uv, u_time * 0.15);
+        vec3 accent = vec3(0.12, 0.45, 0.85) * pattern; // Refined blue infrastructure glow
+        
+        gl_FragColor = vec4(base + accent, 1.0);
+    }`;
+      function cs(type, src) {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        return s;
+      }
+      const prog = gl.createProgram();
+      gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+      gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+      gl.linkProgram(prog);
+      gl.useProgram(prog);
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+      const pos = gl.getAttribLocation(prog, 'a_position');
+      gl.enableVertexAttribArray(pos);
+      gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+      const uTime = gl.getUniformLocation(prog, 'u_time');
+      const uRes = gl.getUniformLocation(prog, 'u_resolution');
+      const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+      let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+      window.addEventListener('mousemove', (event) => {
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width && rect.height) {
+          const nx = (event.clientX - rect.left) / rect.width;
+          const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+          mouse.x = nx * canvas.width;
+          mouse.y = ny * canvas.height;
+        }
+      });
+
+      function render(t) {
+        if (typeof ResizeObserver === 'undefined') syncSize();
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        if (uTime) gl.uniform1f(uTime, t * 0.001);
+        if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+        if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        requestAnimationFrame(render);
+      }
+      render(0);
+    })();
+    // --- End WebGL Shader Script ---
+
+    // Custom Alert Helper
+    const showAlert = (msg) => {
+      const alertEl = document.getElementById('auth-alert');
+      document.getElementById('auth-alert-msg').innerText = msg;
+      alertEl.classList.remove('-translate-y-full', 'opacity-0');
+      setTimeout(() => alertEl.classList.add('-translate-y-full', 'opacity-0'), 3000);
+    };
+
+    // Password Visibility Toggle
+    document.getElementById('togglePassword').addEventListener('click', function () {
+      const pwdInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eyeIcon');
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        eyeIcon.innerText = 'visibility_off';
+      } else {
+        pwdInput.type = 'password';
+        eyeIcon.innerText = 'visibility';
+      }
+    });
+
+    // Google Auth Placeholder
+    document.getElementById('googleAuthBtn').addEventListener('click', () => {
+      showAlert('Google OAuth is not currently configured in the backend.');
+    });
+
+    // Forgot Password Placeholder
+    document.getElementById('forgotPasswordBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      showAlert('Password reset flow is not currently implemented in the backend.');
+    });
+
+    // Existing Email Auth Logic
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('submitBtn');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">refresh</span> Signing In...';
+      btn.classList.add('opacity-80', 'cursor-not-allowed');
+
+      try {
+        const response = await fetch('http://127.0.0.1:5005/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Login failed');
+        }
+
+        // Save token and role in localStorage
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('user_role', data.user.role);
+        localStorage.setItem('user_id', data.user.id);
+        localStorage.setItem('user_email', data.user.email);
+
+        if (window.showToast) window.showToast('Login successful! Redirecting...', 'success');
+        
+        // Wait briefly for toast, then redirect based on exact existing logic
+        setTimeout(() => {
+          if (data.user.role === 'citizen') {
+            window.location.href = '/citizen/dashboard.html';
+          } else {
+            window.location.href = '/gov/dashboard.html';
+          }
+        }, 1000);
+
+      } catch (err) {
+        console.error(err);
+        if (window.showToast) window.showToast(err.message, 'error');
+        else showAlert(err.message);
+        
+        btn.disabled = false;
+        btn.innerHTML = 'Sign In <span class="material-symbols-outlined text-[18px]">arrow_forward</span>';
+        btn.classList.remove('opacity-80', 'cursor-not-allowed');
+      }
+    });
+  </script>
+</body>
+</html>

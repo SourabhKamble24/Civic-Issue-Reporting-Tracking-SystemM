@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - CivicTriage</title>
+  <link rel="stylesheet" href="../src/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans antialiased bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300 min-h-screen flex flex-col">
+  
+  <!-- Navigation -->
+  <nav class="glass-nav py-4 px-6 w-full fixed top-0 z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <a href="../index.html" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded bg-primary-600 flex items-center justify-center text-white font-bold text-xl">C</div>
+        <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white">CivicTriage Admin</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <a href="../gov/dashboard.html" class="hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors hidden md:block mr-2">Queue</a>
+        <a href="../analytics.html" class="hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors hidden md:block mr-2">Analytics</a>
+        <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2.5">
+          <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+          <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+        </button>
+        <a href="../login.html" class="text-slate-600 dark:text-slate-300 font-medium hover:text-primary-600 dark:hover:text-primary-400">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Section -->
+  <main class="flex-grow pt-24 pb-12 px-4 max-w-7xl mx-auto w-full">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-white">System Administration</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-2">Monitor system health, AI accuracy, and duplicate complaint prevention metrics.</p>
+    </div>
+
+    <!-- AI Performance Metrics -->
+    <h2 class="text-xl font-bold mb-4">AI Model Performance</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      
+      <!-- YOLOv8 Metrics -->
+      <div class="glass-card">
+        <h3 class="font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center justify-between">
+          <span>YOLOv8 Vision Model</span>
+          <span class="bg-green-100 text-green-700 text-[10px] uppercase font-bold px-2 py-1 rounded">Active</span>
+        </h3>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-slate-500 text-sm">Avg. Inference Time</span>
+            <span class="font-mono font-medium">120ms</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500 text-sm">Detection Accuracy</span>
+            <span class="font-mono font-medium text-green-600">92.4%</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500 text-sm">Images Processed (24h)</span>
+            <span class="font-mono font-medium">1,402</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NLP Metrics -->
+      <div class="glass-card">
+        <h3 class="font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center justify-between">
+          <span>DistilBERT Text Model</span>
+          <span class="bg-green-100 text-green-700 text-[10px] uppercase font-bold px-2 py-1 rounded">Active</span>
+        </h3>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-slate-500 text-sm">Avg. Inference Time</span>
+            <span class="font-mono font-medium">85ms</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500 text-sm">Classification Accuracy</span>
+            <span class="font-mono font-medium text-green-600">89.1%</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500 text-sm">Text Processed (24h)</span>
+            <span class="font-mono font-medium">1,402</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Duplicate Prevention -->
+      <div class="glass-card bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800">
+        <h3 class="font-bold text-primary-800 dark:text-primary-200 border-b border-primary-200 dark:border-primary-800 pb-2 mb-4">
+          Duplicate Detection Engine
+        </h3>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-primary-700 dark:text-primary-300 text-sm">Rules Enforced</span>
+            <span class="font-mono text-xs">Dist &le; 5m + Sim &ge; 0.75</span>
+          </div>
+          <div class="flex justify-between mt-2">
+            <span class="text-primary-700 dark:text-primary-300 text-sm font-medium">Duplicates Caught (Total)</span>
+            <span class="font-mono font-bold text-lg text-primary-600 dark:text-primary-400">342</span>
+          </div>
+          <div class="text-xs text-primary-600 dark:text-primary-400 mt-2">
+            Saved approx. 171 hours of manual officer review time.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Health -->
+    <h2 class="text-xl font-bold mb-4">System Health</h2>
+    <div class="glass-card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+          <thead class="text-xs uppercase bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+            <tr>
+              <th class="px-6 py-4 rounded-tl-lg">Service</th>
+              <th class="px-6 py-4">Status</th>
+              <th class="px-6 py-4">Uptime</th>
+              <th class="px-6 py-4">Memory Usage</th>
+              <th class="px-6 py-4 rounded-tr-lg text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+            <tr>
+              <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">API Gateway</td>
+              <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold uppercase">Online</span></td>
+              <td class="px-6 py-4">99.9%</td>
+              <td class="px-6 py-4">124 MB</td>
+              <td class="px-6 py-4 text-right"><button class="text-primary-600 hover:underline text-xs">Restart</button></td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">Database (PostGIS)</td>
+              <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold uppercase">Online</span></td>
+              <td class="px-6 py-4">99.9%</td>
+              <td class="px-6 py-4">2.4 GB</td>
+              <td class="px-6 py-4 text-right"><button class="text-primary-600 hover:underline text-xs">Backup</button></td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">AI Inference Server (GPU)</td>
+              <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold uppercase">Online</span></td>
+              <td class="px-6 py-4">99.5%</td>
+              <td class="px-6 py-4">6.1 GB VRAM</td>
+              <td class="px-6 py-4 text-right"><button class="text-primary-600 hover:underline text-xs">Flush Cache</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="../src/js/main.js"></script>
+</body>
+</html>

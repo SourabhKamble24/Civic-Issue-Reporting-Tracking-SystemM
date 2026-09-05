@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Report Issue - CivicAI</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#191c1e",
+                        "on-primary-fixed-variant": "#374765",
+                        "on-surface": "#0b1c30",
+                        "on-surface-variant": "#44474d",
+                        "surface-bright": "#f8f9ff",
+                        "on-background": "#0b1c30",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#e0e3e5",
+                        "secondary": "#0051d5",
+                        "surface-variant": "#d3e4fe",
+                        "secondary-container": "#316bf3",
+                        "tertiary": "#131718",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "surface-tint": "#4e5f7d",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-container-high": "#dce9ff",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#f8f9ff",
+                        "on-primary-fixed": "#081b37",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#c4c7c9",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#b6c7ea",
+                        "secondary-fixed": "#dbe1ff",
+                        "outline-variant": "#c5c6ce",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-primary-container": "#8293b4",
+                        "inverse-surface": "#213145",
+                        "on-tertiary-container": "#8f9294",
+                        "outline": "#75777e",
+                        "on-secondary-container": "#fefcff",
+                        "on-error": "#ffffff",
+                        "primary": "#031631",
+                        "surface-dim": "#cbdbf5",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "inverse-primary": "#b6c7ea",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#00174b",
+                        "tertiary-container": "#282b2d",
+                        "background": "#f8f9ff",
+                        "primary-container": "#1a2b47",
+                        "on-secondary-fixed-variant": "#003ea8",
+                        "primary-fixed": "#d6e3ff",
+                        "surface-container": "#e5eeff",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "container-max": "1200px",
+                        "margin-mobile": "16px",
+                        "md": "16px",
+                        "unit": "4px",
+                        "xs": "4px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex">
+<!-- Shared Component: SideNavBar -->
+<aside class="bg-surface dark:bg-surface-container-lowest border-r border-outline-variant dark:border-outline flat no shadows h-screen w-64 fixed left-0 top-0 z-30 hidden md:flex flex-col p-md gap-sm">
+<div class="mb-xl flex flex-col items-start px-md">
+<!-- Replacing Avatar with text for simplicity in layout, maintaining semantic meaning -->
+<div class="font-headline-md text-headline-md text-primary dark:text-primary-fixed mb-1">CivicAI</div>
+<div class="font-label-md text-label-md text-on-surface-variant">City Services Portal</div>
+</div>
+<nav class="flex flex-col gap-sm flex-1">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-lg transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-lg transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">assignment</span>
+                My Issues
+            </a>
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-lg font-bold font-label-md text-label-md Active: scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                Report Issue
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-lg transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">map</span>
+                Live Map
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-lg transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">notifications</span>
+                Notifications
+            </a>
+</nav>
+<div class="mt-auto">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-lg transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">person</span>
+                Profile
+            </a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 md:ml-64 p-margin-mobile md:p-xl flex justify-center pb-32">
+<div class="w-full max-w-[800px]">
+<!-- Step Progress Indicator -->
+<div class="mb-xl flex items-center justify-between relative">
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-surface-container-high -z-10 rounded-full"></div>
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-1/4 h-1 bg-secondary -z-10 rounded-full"></div>
+<div class="flex flex-col items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-sm shadow-md">1</div>
+<span class="font-label-sm text-label-sm text-on-surface">Issue Type</span>
+</div>
+<div class="flex flex-col items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant flex items-center justify-center font-label-sm">2</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Evidence</span>
+</div>
+<div class="flex flex-col items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant flex items-center justify-center font-label-sm">3</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Location</span>
+</div>
+<div class="flex flex-col items-center gap-xs hidden sm:flex">
+<div class="w-8 h-8 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant flex items-center justify-center font-label-sm">4</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Details</span>
+</div>
+<div class="flex flex-col items-center gap-xs hidden sm:flex">
+<div class="w-8 h-8 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant flex items-center justify-center font-label-sm">5</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Review</span>
+</div>
+</div>
+<!-- Content Area - Step 1 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-[0px_4px_20px_rgba(26,43,71,0.08)]">
+<header class="mb-lg text-center md:text-left">
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-sm">What would you like to report?</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Select the category that best describes the infrastructure issue.</p>
+</header>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-md mb-xl">
+<!-- Option 1 -->
+<button class="flex flex-col items-center justify-center p-md rounded-lg border border-outline-variant bg-surface hover:bg-surface-container-high transition-colors group focus:outline-none focus:ring-2 focus:ring-secondary">
+<span class="material-symbols-outlined text-4xl text-primary mb-sm group-hover:scale-110 transition-transform">commute</span>
+<span class="font-label-md text-label-md text-on-surface text-center">Road Damage</span>
+</button>
+<!-- Option 2 -->
+<button class="flex flex-col items-center justify-center p-md rounded-lg border border-secondary bg-surface-variant transition-colors group focus:outline-none focus:ring-2 focus:ring-secondary relative">
+<div class="absolute top-sm right-sm text-secondary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="material-symbols-outlined text-4xl text-primary mb-sm">warning</span>
+<span class="font-label-md text-label-md text-on-surface text-center font-bold">Pothole</span>
+</button>
+<!-- Option 3 -->
+<button class="flex flex-col items-center justify-center p-md rounded-lg border border-outline-variant bg-surface hover:bg-surface-container-high transition-colors group focus:outline-none focus:ring-2 focus:ring-secondary">
+<span class="material-symbols-outlined text-4xl text-primary mb-sm group-hover:scale-110 transition-transform">lightbulb</span>
+<span class="font-label-md text-label-md text-on-surface text-center">Streetlight</span>
+</button>
+<!-- Option 4 -->
+<button class="flex flex-col items-center justify-center p-md rounded-lg border border-outline-variant bg-surface hover:bg-surface-container-high transition-colors group focus:outline-none focus:ring-2 focus:ring-secondary">
+<span class="material-symbols-outlined text-4xl text-primary mb-sm group-hover:scale-110 transition-transform">delete</span>
+<span class="font-label-md text-label-md text-on-surface text-center">Garbage</span>
+</button>
+<!-- Option 5 -->
+<button class="flex flex-col items-center justify-center p-md rounded-lg border border-outline-variant bg-surface hover:bg-surface-container-high transition-colors group focus:outline-none focus:ring-2 focus:ring-secondary">
+<span class="material-symbols-outlined text-4xl text-primary mb-sm group-hover:scale-110 transition-transform">water_drop</span>
+<span class="font-label-md text-label-md text-on-surface text-center">Water Leak</span>
+</button>
+<!-- Option 6 -->
+<button class="flex flex-col items-center justify-center p-md rounded-lg border border-outline-variant bg-surface hover:bg-surface-container-high transition-colors group focus:outline-none focus:ring-2 focus:ring-secondary">
+<span class="material-symbols-outlined text-4xl text-primary mb-sm group-hover:scale-110 transition-transform">traffic</span>
+<span class="font-label-md text-label-md text-on-surface text-center">Traffic Issue</span>
+</button>
+<!-- Option 7 -->
+<button class="flex flex-col items-center justify-center p-md rounded-lg border border-outline-variant bg-surface hover:bg-surface-container-high transition-colors group focus:outline-none focus:ring-2 focus:ring-secondary">
+<span class="material-symbols-outlined text-4xl text-primary mb-sm group-hover:scale-110 transition-transform">park</span>
+<span class="font-label-md text-label-md text-on-surface text-center">Public Space</span>
+</button>
+<!-- Option 8 -->
+<button class="flex flex-col items-center justify-center p-md rounded-lg border border-outline-variant bg-surface hover:bg-surface-container-high transition-colors group focus:outline-none focus:ring-2 focus:ring-secondary">
+<span class="material-symbols-outlined text-4xl text-primary mb-sm group-hover:scale-110 transition-transform">more_horiz</span>
+<span class="font-label-md text-label-md text-on-surface text-center">Other</span>
+</button>
+</div>
+<!-- Navigation Buttons -->
+<div class="flex justify-between items-center border-t border-outline-variant pt-lg mt-lg">
+<button class="px-lg py-sm rounded-lg bg-surface-container-lowest text-primary border border-primary font-label-md text-label-md hover:bg-surface-container-high transition-colors min-w-[100px] min-h-[44px]">
+                        Cancel
+                    </button>
+<button class="px-lg py-sm rounded-lg bg-secondary text-on-secondary font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-xs min-h-[44px] shadow-sm">
+                        Next Step
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

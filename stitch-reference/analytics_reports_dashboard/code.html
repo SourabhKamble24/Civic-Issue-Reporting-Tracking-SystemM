@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Civic Intelligence Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed": "#00174b",
+                      "surface": "#f8f9ff",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-fixed": "#081b37",
+                      "surface-container-high": "#dce9ff",
+                      "on-surface": "#0b1c30",
+                      "on-background": "#0b1c30",
+                      "on-primary-container": "#8293b4",
+                      "on-secondary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "background": "#f8f9ff",
+                      "secondary-fixed": "#dbe1ff",
+                      "surface-tint": "#4e5f7d",
+                      "primary-container": "#1a2b47",
+                      "primary": "#031631",
+                      "on-tertiary-container": "#8f9294",
+                      "tertiary-fixed": "#e0e3e5",
+                      "inverse-primary": "#b6c7ea",
+                      "primary-fixed-dim": "#b6c7ea",
+                      "inverse-on-surface": "#eaf1ff",
+                      "surface-container": "#e5eeff",
+                      "outline-variant": "#c5c6ce",
+                      "on-primary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "surface-bright": "#f8f9ff",
+                      "inverse-surface": "#213145",
+                      "error": "#ba1a1a",
+                      "primary-fixed": "#d6e3ff",
+                      "on-secondary-container": "#fefcff",
+                      "on-error": "#ffffff",
+                      "on-surface-variant": "#44474d",
+                      "tertiary": "#131718",
+                      "on-primary-fixed-variant": "#374765",
+                      "secondary-container": "#316bf3",
+                      "on-tertiary-fixed-variant": "#444749",
+                      "surface-dim": "#cbdbf5",
+                      "outline": "#75777e",
+                      "secondary-fixed-dim": "#b4c5ff",
+                      "surface-container-highest": "#d3e4fe",
+                      "tertiary-container": "#282b2d",
+                      "tertiary-fixed-dim": "#c4c7c9",
+                      "on-secondary-fixed-variant": "#003ea8",
+                      "surface-variant": "#d3e4fe",
+                      "secondary": "#0051d5",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#eff4ff",
+                      "on-tertiary-fixed": "#191c1e"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "8px",
+                      "xs": "4px",
+                      "margin-mobile": "16px",
+                      "xl": "32px",
+                      "unit": "4px",
+                      "gutter": "24px",
+                      "container-max": "1200px",
+                      "md": "16px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+<!-- Side Navigation (Shared Component) -->
+<nav class="bg-surface-container-low dark:bg-surface-container shadow-sm dark:shadow-none h-screen w-64 hidden md:flex flex-col fixed left-0 top-0 p-md gap-sm z-40 border-r border-outline-variant">
+<div class="mb-lg px-md">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed truncate">Municipal Portal</h1>
+<p class="font-body-md text-body-md text-on-surface-variant truncate text-sm">City Hall District 1</p>
+</div>
+<button class="bg-primary text-on-primary rounded-lg py-sm px-md mb-md font-label-md text-label-md flex items-center justify-center gap-sm hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-lg">add</span>
+            New Report
+        </button>
+<ul class="flex flex-col gap-xs flex-grow">
+<li>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors rounded-lg font-label-md text-label-md scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Command Center
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors rounded-lg font-label-md text-label-md scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">list_alt</span>
+                    Issue Queue
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors rounded-lg font-label-md text-label-md scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">business_center</span>
+                    Departments
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-lg font-label-md text-label-md scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                    Analytics
+                </a>
+</li>
+</ul>
+<div class="mt-auto border-t border-outline-variant pt-sm">
+<ul class="flex flex-col gap-xs">
+<li>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors rounded-lg font-label-md text-label-md scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">settings</span>
+                        Settings
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors rounded-lg font-label-md text-label-md scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+                        Support
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 flex flex-col min-h-screen">
+<!-- Top App Bar (Shared Component) -->
+<header class="bg-surface-container-lowest dark:bg-surface w-full top-0 sticky z-30 border-b border-outline-variant dark:border-outline flex justify-between items-center px-lg py-sm">
+<div class="flex items-center gap-md">
+<!-- Mobile menu toggle would go here -->
+<h2 class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed hidden md:block">CityGov Analytics</h2>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="pl-xl pr-md py-xs rounded-full border border-outline-variant bg-surface focus:border-secondary focus:ring-1 focus:ring-secondary outline-none text-body-md font-body-md w-64 transition-all duration-200" placeholder="Search reports..." type="text"/>
+</div>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:text-secondary dark:hover:text-secondary-fixed transition-colors cursor-pointer transition-all duration-200 p-sm rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:text-secondary dark:hover:text-secondary-fixed transition-colors cursor-pointer transition-all duration-200 p-sm rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-secondary-container overflow-hidden border border-outline-variant cursor-pointer">
+<img alt="Administrator Profile" class="w-full h-full object-cover" data-alt="A small, professional headshot portrait of an administrator used as a profile avatar. The person is smiling warmly, dressed in business casual attire against a clean, neutral gray background. Soft, even studio lighting highlights their face." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRF6xtGSFm8DSjN0KTDKBO4kYLHzve6FdrSeR6PTpVZe0ii68XgVjy29xag_oDOUrqPQm77Q9gY-k6bLnfjia8Qq8EFAgsoGVq2f3qnET9DzOcrl43vfuDz3XO9ZVJ1oWv1IjAKe25yAecpJBsFaZfjyzM3d5SRK1339dndKDkMUwaH3eq_9kLOnksAn9bGFOJ0mj2BY8J_QGQ5RlBwPxAvcbXq3B0GqT08AaQ4NWAujTwm-TzAhxx"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<div class="p-4 md:p-lg lg:p-xl flex-grow max-w-container-max mx-auto w-full flex flex-col gap-xl">
+<!-- Header & Actions -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-md">
+<div>
+<h1 class="font-display-lg text-display-lg text-primary mb-xs">Civic Intelligence Analytics</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Real-time municipal performance metrics powered by CivicAI.</p>
+</div>
+<div class="flex flex-wrap gap-sm">
+<button class="bg-surface-container-lowest text-primary border border-outline-variant px-md py-sm rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors shadow-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">download</span>
+                        Export Report
+                    </button>
+<button class="bg-secondary text-on-secondary px-md py-sm rounded-lg font-label-md text-label-md hover:bg-secondary/90 transition-colors shadow-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">summarize</span>
+                        Generate Government Report
+                    </button>
+</div>
+</div>
+<!-- Filters Bar -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-sm shadow-sm flex flex-wrap gap-md items-center">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">filter_list</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Filters:</span>
+</div>
+<select class="bg-surface border-outline-variant border rounded-md py-xs px-sm font-label-md text-label-sm text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary outline-none">
+<option>Last 30 Days</option>
+<option>Last 7 Days</option>
+<option>This Year</option>
+</select>
+<select class="bg-surface border-outline-variant border rounded-md py-xs px-sm font-label-md text-label-sm text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary outline-none">
+<option>All Wards</option>
+<option>Ward 1</option>
+<option>Ward 2</option>
+</select>
+<select class="bg-surface border-outline-variant border rounded-md py-xs px-sm font-label-md text-label-sm text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary outline-none">
+<option>All Categories</option>
+<option>Roads</option>
+<option>Sanitation</option>
+</select>
+<select class="bg-surface border-outline-variant border rounded-md py-xs px-sm font-label-md text-label-sm text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary outline-none">
+<option>All Departments</option>
+<option>Public Works</option>
+<option>Water</option>
+</select>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary rounded-l-xl"></div>
+<div class="flex justify-between items-start mb-sm pl-xs">
+<h3 class="font-label-md text-label-md text-on-surface-variant">Total Issues</h3>
+<span class="material-symbols-outlined text-primary bg-surface-container-low p-xs rounded-md">report</span>
+</div>
+<div class="pl-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface block mb-xs">4,284</span>
+<div class="flex items-center gap-xs text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span>+5.2% from last month</span>
+</div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute left-0 top-0 bottom-0 w-[4px] bg-[#10b981] rounded-l-xl"></div>
+<div class="flex justify-between items-start mb-sm pl-xs">
+<h3 class="font-label-md text-label-md text-on-surface-variant">Resolved Issues</h3>
+<span class="material-symbols-outlined text-[#10b981] bg-[#10b981]/10 p-xs rounded-md">check_circle</span>
+</div>
+<div class="pl-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface block mb-xs">3,912</span>
+<div class="flex items-center gap-xs text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span>91.3% resolution rate</span>
+</div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute left-0 top-0 bottom-0 w-[4px] bg-secondary rounded-l-xl"></div>
+<div class="flex justify-between items-start mb-sm pl-xs">
+<h3 class="font-label-md text-label-md text-on-surface-variant">Avg. Resolution Time</h3>
+<span class="material-symbols-outlined text-secondary bg-surface-container-low p-xs rounded-md">timer</span>
+</div>
+<div class="pl-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface block mb-xs">8.4h</span>
+<div class="flex items-center gap-xs text-[#10b981] font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+<span>Faster than 30d avg</span>
+</div>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute left-0 top-0 bottom-0 w-[4px] bg-[#8b5cf6] rounded-l-xl"></div>
+<div class="flex justify-between items-start mb-sm pl-xs">
+<h3 class="font-label-md text-label-md text-on-surface-variant">AI Accuracy</h3>
+<span class="material-symbols-outlined text-[#8b5cf6] bg-[#8b5cf6]/10 p-xs rounded-md">psychology</span>
+</div>
+<div class="pl-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface block mb-xs">98.2%</span>
+<div class="flex items-center gap-xs text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span>Auto-categorization</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-md">
+<!-- Resolution Trends (Line Chart) - Takes up 2 columns -->
+<div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm flex flex-col h-96">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-md text-[18px] font-semibold text-on-surface">Resolution Trends</h3>
+<button class="text-on-surface-variant hover:text-secondary"><span class="material-symbols-outlined text-sm">more_vert</span></button>
+</div>
+<div class="relative flex-grow w-full h-full">
+<canvas id="resolutionTrendsChart"></canvas>
+</div>
+</div>
+<!-- Priority Distribution (Pie/Doughnut Chart) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm flex flex-col h-96">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-md text-[18px] font-semibold text-on-surface">Priority Distribution</h3>
+<button class="text-on-surface-variant hover:text-secondary"><span class="material-symbols-outlined text-sm">more_vert</span></button>
+</div>
+<div class="relative flex-grow w-full h-full flex items-center justify-center">
+<canvas id="priorityChart"></canvas>
+</div>
+</div>
+</div>
+<!-- Bottom Row: Bar Chart & Impact Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-md">
+<!-- Issues by Category (Bar Chart) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm flex flex-col h-80">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-md text-[18px] font-semibold text-on-surface">Issues by Category</h3>
+<button class="text-on-surface-variant hover:text-secondary"><span class="material-symbols-outlined text-sm">more_vert</span></button>
+</div>
+<div class="relative flex-grow w-full h-full">
+<canvas id="categoryChart"></canvas>
+</div>
+</div>
+<!-- Impact Section (Before vs After AI) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col relative">
+<!-- Decorative background element -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary-container rounded-bl-full opacity-20 -z-0"></div>
+<div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface-container-low/50 z-10">
+<h3 class="font-headline-md text-[18px] font-semibold text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">bolt</span>
+                            AI Impact Analysis
+                        </h3>
+<span class="bg-[#10b981]/10 text-[#10b981] px-sm py-xs rounded-full font-label-sm text-label-sm flex items-center gap-xs font-bold border border-[#10b981]/20">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+                            41% Improvement
+                        </span>
+</div>
+<div class="p-md flex-grow flex flex-col justify-center gap-lg z-10">
+<p class="font-body-md text-body-md text-on-surface-variant mb-sm">
+                            CivicAI implementation has significantly reduced average issue resolution times across all municipal departments.
+                        </p>
+<div class="space-y-md">
+<!-- Before AI -->
+<div>
+<div class="flex justify-between mb-xs">
+<span class="font-label-md text-label-md text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm text-outline">history</span>
+                                        Before AI (Avg)
+                                    </span>
+<span class="font-headline-md text-[16px] text-on-surface">14.2 hrs</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-outline h-2 rounded-full w-[80%]"></div>
+</div>
+</div>
+<!-- After AI -->
+<div>
+<div class="flex justify-between mb-xs">
+<span class="font-label-md text-label-md text-primary flex items-center gap-xs font-semibold">
+<span class="material-symbols-outlined text-sm text-secondary">smart_toy</span>
+                                        After AI (Current)
+                                    </span>
+<span class="font-headline-md text-[16px] text-secondary font-bold">8.4 hrs</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-secondary h-2 rounded-full w-[47%] relative">
+<div class="absolute -right-1 -top-1 w-4 h-4 bg-secondary rounded-full border-2 border-white shadow-sm"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Chart Setup Scripts -->
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Common Chart.js options for the theme
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = "#44474d"; // on-surface-variant
+            const gridColor = "#e5eeff"; // surface-container
+            
+            // 1. Resolution Trends (Line Chart)
+            const ctxTrends = document.getElementById('resolutionTrendsChart').getContext('2d');
+            new Chart(ctxTrends, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Avg Resolution Time (hrs)',
+                        data: [14.2, 13.8, 13.5, 12.1, 11.5, 10.8, 10.2, 9.7, 9.1, 8.8, 8.5, 8.4],
+                        borderColor: '#0051d5', // secondary
+                        backgroundColor: 'rgba(0, 81, 213, 0.1)', // secondary with opacity
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#0051d5',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: '#031631', // primary
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            padding: 10,
+                            cornerRadius: 4
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 16,
+                            grid: { color: gridColor, drawBorder: false },
+                            border: { dash: [4, 4] }
+                        },
+                        x: {
+                            grid: { display: false, drawBorder: false }
+                        }
+                    }
+                }
+            });
+
+            // 2. Priority Distribution (Doughnut Chart)
+            const ctxPriority = document.getElementById('priorityChart').getContext('2d');
+            new Chart(ctxPriority, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Critical', 'High', 'Medium', 'Low'],
+                    datasets: [{
+                        data: [12, 28, 45, 15],
+                        backgroundColor: [
+                            '#ba1a1a', // error (Red)
+                            '#f59e0b', // amber (Yellow-orange)
+                            '#316bf3', // secondary-container (Blue)
+                            '#8293b4'  // on-primary-container (Gray/Blue)
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 12 }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 3. Issues by Category (Bar Chart)
+            const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+            new Chart(ctxCategory, {
+                type: 'bar',
+                data: {
+                    labels: ['Roads', 'Water', 'Electrical', 'Sanitation'],
+                    datasets: [{
+                        label: 'Total Issues',
+                        data: [1450, 980, 720, 1134],
+                        backgroundColor: '#031631', // primary
+                        borderRadius: 4,
+                        barThickness: 24
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: gridColor, drawBorder: false },
+                            border: { dash: [4, 4] }
+                        },
+                        x: {
+                            grid: { display: false, drawBorder: false }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body></html>

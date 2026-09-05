@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicAI - AI-Based Public Infrastructure Issue Prioritization</title>
+  <meta name="description" content="Report public infrastructure issues. Our AI analyzes severity and prioritizes repairs for faster resolution.">
+  <!-- Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script type="module" crossorigin src="/assets/main-BtIqWa9Q.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/main-XBK2x3LN.js">
+  <link rel="stylesheet" crossorigin href="/assets/main-DBa71oKw.css">
+</head>
+<body class="bg-surface text-navy min-h-screen flex flex-col font-sans antialiased">
+  
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-surface-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center gap-8">
+          <a href="index.html" class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-action text-3xl">account_balance</span>
+            <span class="font-bold text-xl tracking-tight text-navy">CivicAI</span>
+          </a>
+          <div class="hidden lg:flex items-center space-x-6 text-sm font-medium">
+            <a href="index.html" class="text-action font-semibold">Home</a>
+            <a href="#services" class="text-slate-600 hover:text-navy transition-colors">Services</a>
+            <a href="#how-it-works" class="text-slate-600 hover:text-navy transition-colors">How It Works</a>
+            <a href="map.html" class="text-slate-600 hover:text-navy transition-colors">Live Issues</a>
+            <a href="#help" class="text-slate-600 hover:text-navy transition-colors">Help</a>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <select class="hidden md:block form-select !py-1.5 !text-sm w-32 bg-surface">
+            <option>English</option>
+            <option>Hindi</option>
+            <option>Marathi</option>
+          </select>
+          <a href="login.html" class="font-medium text-sm text-slate-600 hover:text-navy transition-colors px-2">Login</a>
+          <a href="citizen/register-complaint.html" class="btn-primary py-2 px-4 text-sm hidden sm:inline-flex">
+            Report an Issue
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative bg-white pt-20 pb-24 overflow-hidden border-b border-surface-border">
+    <!-- Abstract subtle shapes for Civic feel (no heavy gradients) -->
+    <div class="absolute right-0 top-0 -mr-20 -mt-20 w-96 h-96 bg-surface-dim rounded-full opacity-20 blur-3xl"></div>
+    <div class="absolute left-10 bottom-10 w-64 h-64 bg-action rounded-full opacity-5 blur-3xl"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-pill bg-surface-container border border-surface-border text-sm font-semibold text-action mb-6">
+        <span class="material-symbols-outlined text-sm">verified</span>
+        <span>AI-Powered Infrastructure Management</span>
+      </div>
+      <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-navy mb-6 leading-tight max-w-4xl mx-auto">
+        Make Your City Better, <br/>
+        <span class="text-action">Together.</span>
+      </h1>
+      <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+        AI-powered public infrastructure reporting, verification and intelligent prioritization. Help your local authorities act faster on what matters most.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="citizen/register-complaint.html" class="btn-primary text-lg px-8 py-4 shadow-lg shadow-action/20">
+          <span class="material-symbols-outlined mr-2">add_circle</span> Report an Issue
+        </a>
+        <a href="citizen/dashboard.html" class="btn-secondary text-lg px-8 py-4">
+          <span class="material-symbols-outlined mr-2">track_changes</span> Track Issue
+        </a>
+      </div>
+      
+      <!-- Trust/Accessibility Indicators -->
+      <div class="mt-12 flex justify-center items-center gap-8 text-slate-500 text-sm font-medium flex-wrap">
+        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-status-resolved">gpp_good</span> Secure & Verified</div>
+        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-action">accessibility_new</span> WCAG Accessible</div>
+        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-status-medium">update</span> Real-time Tracking</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section class="py-16 bg-surface border-b border-surface-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6" id="landing-stats">
+        <!-- Stats injected via JS -->
+        <div class="card text-center">
+          <div class="text-sm font-medium text-slate-500 uppercase tracking-wider mb-2">Total Issues</div>
+          <div class="text-4xl font-bold text-navy">1,245+</div>
+        </div>
+        <div class="card text-center">
+          <div class="text-sm font-medium text-slate-500 uppercase tracking-wider mb-2">Resolved</div>
+          <div class="text-4xl font-bold text-status-resolved">890+</div>
+        </div>
+        <div class="card text-center">
+          <div class="text-sm font-medium text-slate-500 uppercase tracking-wider mb-2">Active Issues</div>
+          <div class="text-4xl font-bold text-status-medium">355</div>
+        </div>
+        <div class="card text-center">
+          <div class="text-sm font-medium text-slate-500 uppercase tracking-wider mb-2">Response Rate</div>
+          <div class="text-4xl font-bold text-action">92%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works (Workflow) -->
+  <section id="how-it-works" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-navy mb-4">Intelligent Issue Resolution</h2>
+        <p class="text-lg text-slate-600 max-w-2xl mx-auto">Our transparent pipeline ensures your voice reaches the right authority instantly, prioritized by AI.</p>
+      </div>
+
+      <div class="relative">
+        <!-- Connecting Line -->
+        <div class="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 bg-surface-border -translate-y-1/2 z-0"></div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 relative z-10">
+          
+          <div class="bg-white border border-surface-border rounded-xl p-6 shadow-sm text-center relative hover:shadow-card hover:-translate-y-1 transition-all duration-300">
+            <div class="w-12 h-12 rounded-full bg-surface-container text-action flex items-center justify-center mx-auto mb-4 border border-surface-border">
+              <span class="material-symbols-outlined">add_a_photo</span>
+            </div>
+            <h4 class="font-bold text-navy mb-2">1. Report</h4>
+            <p class="text-sm text-slate-500">Citizen uploads photo & details</p>
+          </div>
+
+          <div class="bg-white border border-surface-border rounded-xl p-6 shadow-sm text-center relative hover:shadow-card hover:-translate-y-1 transition-all duration-300">
+            <div class="w-12 h-12 rounded-full bg-surface-container text-action flex items-center justify-center mx-auto mb-4 border border-surface-border">
+              <span class="material-symbols-outlined">smart_toy</span>
+            </div>
+            <h4 class="font-bold text-navy mb-2">2. AI Analysis</h4>
+            <p class="text-sm text-slate-500">Automated defect verification</p>
+          </div>
+
+          <div class="bg-white border border-surface-border rounded-xl p-6 shadow-sm text-center relative hover:shadow-card hover:-translate-y-1 transition-all duration-300">
+            <div class="w-12 h-12 rounded-full bg-status-critical/10 text-status-critical flex items-center justify-center mx-auto mb-4 border border-status-critical/20">
+              <span class="material-symbols-outlined">priority_high</span>
+            </div>
+            <h4 class="font-bold text-navy mb-2">3. Priority</h4>
+            <p class="text-sm text-slate-500">Severity scored by AI</p>
+          </div>
+
+          <div class="bg-white border border-surface-border rounded-xl p-6 shadow-sm text-center relative hover:shadow-card hover:-translate-y-1 transition-all duration-300">
+            <div class="w-12 h-12 rounded-full bg-status-high/10 text-status-high flex items-center justify-center mx-auto mb-4 border border-status-high/20">
+              <span class="material-symbols-outlined">engineering</span>
+            </div>
+            <h4 class="font-bold text-navy mb-2">4. Action</h4>
+            <p class="text-sm text-slate-500">Assigned to right authority</p>
+          </div>
+
+          <div class="bg-white border border-surface-border rounded-xl p-6 shadow-sm text-center relative hover:shadow-card hover:-translate-y-1 transition-all duration-300">
+            <div class="w-12 h-12 rounded-full bg-status-resolved/10 text-status-resolved flex items-center justify-center mx-auto mb-4 border border-status-resolved/20">
+              <span class="material-symbols-outlined">check_circle</span>
+            </div>
+            <h4 class="font-bold text-navy mb-2">5. Resolution</h4>
+            <p class="text-sm text-slate-500">Issue fixed & citizen notified</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-navy text-slate-300 py-12 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="material-symbols-outlined text-action">account_balance</span>
+          <span class="font-bold text-lg tracking-tight text-white">CivicAI</span>
+        </div>
+        <p class="text-sm text-slate-400">Building better cities through artificial intelligence and civic engagement.</p>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="login.html" class="hover:text-white transition">Login</a></li>
+          <li><a href="citizen/register-complaint.html" class="hover:text-white transition">Report an Issue</a></li>
+          <li><a href="map.html" class="hover:text-white transition">Live Issues Map</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold mb-4">Portals</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="citizen/dashboard.html" class="hover:text-white transition">Citizen Dashboard</a></li>
+          <li><a href="gov/dashboard.html" class="hover:text-white transition">Government Portal</a></li>
+          <li><a href="admin/dashboard.html" class="hover:text-white transition">Department Admin</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-slate-800 text-sm text-center text-slate-500">
+      &copy; 2024 CivicAI - AI-Based Public Infrastructure Issue Prioritization System.
+    </div>
+  </footer>
+
+</body>
+</html>

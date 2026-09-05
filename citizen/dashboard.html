@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicAI - Citizen Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="../src/css/style.css">
+</head>
+<body class="bg-background text-on-background min-h-screen">
+    <!-- Desktop Side Navigation -->
+    <aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-surface-container-lowest border-r border-outline-variant dark:border-outline z-50">
+        <div class="flex flex-col h-full p-md gap-sm">
+            <!-- Brand -->
+            <div class="p-xl border-b border-surface-container-highest shrink-0 flex items-center gap-sm">
+            <img src="/logo.png" alt="CivicAI Logo" class="w-10 h-10 rounded-full object-cover shadow-sm bg-white">
+            <div>
+                <h1 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">CivicAI</h1>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">City Services Portal</p>
+            </div>
+        </div>
+            <!-- Nav Links -->
+            <nav class="flex-1 space-y-sm">
+                <a href="dashboard.html" class="flex items-center gap-md px-md py-sm bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-lg font-bold">
+                    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    <span class="font-label-md text-label-md">Dashboard</span>
+                </a>
+                <a href="dashboard.html" class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-lg transition-colors">
+                    <span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+                    <span class="font-label-md text-label-md">My Issues</span>
+                </a>
+                <a href="register-complaint.html" class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-lg transition-colors">
+                    <span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+                    <span class="font-label-md text-label-md">Report Issue</span>
+                </a>
+                <a href="../map.html" class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-lg transition-colors">
+                    <span class="material-symbols-outlined" data-icon="map">map</span>
+                    <span class="font-label-md text-label-md">Live Map</span>
+                </a>
+                <a href="#" class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-lg transition-colors">
+                    <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+                    <span class="font-label-md text-label-md">Notifications</span>
+                </a>
+            </nav>
+            <div class="mt-auto pb-4">
+                <a href="#" id="logout-btn" class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface hover:bg-error-container hover:text-error rounded-lg transition-colors">
+                    <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                    <span class="font-label-md text-label-md">Logout</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Top App Bar -->
+    <header class="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] z-40 bg-surface dark:bg-surface-container-lowest border-b border-outline-variant dark:border-outline">
+        <div class="flex justify-between items-center h-16 px-xl w-full">
+            <!-- Mobile Menu / Title -->
+            <div class="flex items-center gap-md md:hidden">
+                <span class="font-headline-md text-headline-md text-primary dark:text-primary-fixed font-bold">CivicAI</span>
+            </div>
+            <div class="hidden md:block">
+                <span class="font-headline-md text-headline-md text-primary dark:text-primary-fixed font-bold">Dashboard</span>
+            </div>
+            <!-- Search & Actions -->
+            <div class="flex items-center gap-md">
+                <div class="hidden md:flex relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                    <input type="text" placeholder="Search reports..." class="pl-10 pr-4 py-2 bg-surface-container-highest border-none rounded-full text-on-surface font-body-md focus:ring-2 focus:ring-primary w-64 transition-all">
+                </div>
+                <div class="flex items-center gap-lg relative">
+                <button type="button" class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center border border-outline-variant font-bold text-on-secondary-container text-sm cursor-pointer" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                    C
+                </button>
+                <div class="hidden origin-top-right absolute right-0 top-10 mt-2 w-48 rounded-xl shadow-lg py-1 bg-surface ring-1 ring-black ring-opacity-5 focus:outline-none z-50 border border-outline-variant" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1" id="user-menu-dropdown">
+                    <div class="px-4 py-2 border-b border-surface-container-highest">
+                        <p class="font-label-md text-on-surface truncate" id="nav-user-email">citizen@example.com</p>
+                        <p class="font-label-sm text-on-surface-variant">Citizen</p>
+                    </div>
+                    <a href="#" class="block px-4 py-2 font-label-md text-on-surface hover:bg-surface-container-high transition-colors" role="menuitem" tabindex="-1">Settings</a>
+                    <a href="#" class="block px-4 py-2 font-label-md text-error hover:bg-error-container transition-colors" role="menuitem" tabindex="-1" id="logout-btn-top">Sign out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Canvas -->
+    <main class="pt-24 pb-24 md:pl-72 md:pr-8 px-margin-mobile w-full">
+        <!-- Welcome & CTA -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md mb-xl">
+            <div>
+                <h2 class="font-display-lg text-display-lg text-on-background mb-xs" id="greeting">Welcome back.</h2>
+                <p class="font-body-lg text-body-lg text-on-surface-variant">Here is a quick overview of civic activity in your area.</p>
+            </div>
+            <a href="register-complaint.html" class="bg-primary text-on-primary hover:bg-secondary transition-colors px-lg py-3 rounded-full flex items-center gap-2 font-label-md text-label-md shadow-md min-h-[44px]">
+                <span class="material-symbols-outlined">add</span>
+                Report New Issue
+            </a>
+        </div>
+
+        <!-- KPI Bento Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-md mb-xl">
+            <div class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant shadow-sm relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-surface-container rounded-full opacity-50"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-sm text-on-surface-variant">
+                        <span class="material-symbols-outlined text-xl">folder</span>
+                        <span class="font-label-sm text-label-sm uppercase tracking-wider">Total Reports</span>
+                    </div>
+                    <div class="font-display-lg text-display-lg text-primary" id="kpi-total">-</div>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant shadow-sm relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-surface-variant rounded-full opacity-50"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-sm text-on-surface-variant">
+                        <span class="material-symbols-outlined text-xl">hourglass_empty</span>
+                        <span class="font-label-sm text-label-sm uppercase tracking-wider">Pending</span>
+                    </div>
+                    <div class="font-display-lg text-display-lg text-primary" id="kpi-pending">-</div>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant shadow-sm relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-secondary-container rounded-full opacity-20"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-sm text-on-surface-variant">
+                        <span class="material-symbols-outlined text-xl">autorenew</span>
+                        <span class="font-label-sm text-label-sm uppercase tracking-wider">In Progress</span>
+                    </div>
+                    <div class="font-display-lg text-display-lg text-secondary" id="kpi-progress">-</div>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant shadow-sm relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-surface-container-highest rounded-full opacity-50"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-sm text-on-surface-variant">
+                        <span class="material-symbols-outlined text-xl">check_circle</span>
+                        <span class="font-label-sm text-label-sm uppercase tracking-wider">Resolved</span>
+                    </div>
+                    <div class="font-display-lg text-display-lg text-primary" id="kpi-resolved">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Layout Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+            <!-- Recent Issues Column -->
+            <div class="lg:col-span-2 space-y-md" id="issues-list">
+                <h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-md">Recent Issues</h3>
+                <div class="flex items-center justify-center p-12">
+                    <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            </div>
+
+            <!-- Sidebar Column -->
+            <div class="space-y-xl">
+                <!-- Live Map Widget -->
+                <div>
+                    <h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-md">Nearby Activity</h3>
+                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden h-64 relative" id="dashboard-map-container">
+                        <div class="w-full h-full bg-slate-200 animate-pulse"></div>
+                    </div>
+                </div>
+
+                <!-- Community Impact -->
+                <div class="bg-primary-container rounded-xl p-lg text-on-primary-container relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white opacity-5 rounded-full blur-2xl"></div>
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-secondary opacity-20 rounded-full blur-xl"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-2 mb-sm text-secondary-fixed">
+                            <span class="material-symbols-outlined">volunteer_activism</span>
+                            <span class="font-label-sm text-label-sm uppercase tracking-wider font-bold">Community Impact</span>
+                        </div>
+                        <h3 class="font-headline-md text-headline-md text-on-primary mb-md">Making a Difference Together</h3>
+                        <p class="font-body-md text-body-md text-primary-fixed-dim mb-lg">This month, citizen reports like yours helped resolve <strong>150 infrastructure issues</strong> across the city.</p>
+                        <div class="space-y-sm">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="font-label-md text-on-primary">Streetlights Fixed</span>
+                                <span class="font-bold text-on-primary">84</span>
+                            </div>
+                            <div class="w-full bg-surface-tint rounded-full h-1.5">
+                                <div class="bg-secondary-fixed h-1.5 rounded-full" style="width: 60%"></div>
+                            </div>
+                            <div class="flex justify-between items-center text-sm pt-2">
+                                <span class="font-label-md text-on-primary">Potholes Filled</span>
+                                <span class="font-bold text-on-primary">42</span>
+                            </div>
+                            <div class="w-full bg-surface-tint rounded-full h-1.5">
+                                <div class="bg-secondary-fixed h-1.5 rounded-full" style="width: 30%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant z-50 px-2 py-2 flex justify-between items-center h-16">
+        <a href="dashboard.html" class="flex flex-col items-center justify-center w-16 h-full text-primary font-bold">
+            <div class="bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 mb-1">
+                <span class="material-symbols-outlined text-xl">dashboard</span>
+            </div>
+            <span class="text-[10px] leading-tight">Dashboard</span>
+        </a>
+        <a href="dashboard.html" class="flex flex-col items-center justify-center w-16 h-full text-on-surface-variant hover:text-on-surface">
+            <span class="material-symbols-outlined text-xl mb-1">assignment</span>
+            <span class="text-[10px] leading-tight">Issues</span>
+        </a>
+        <a href="register-complaint.html" class="flex flex-col items-center justify-center w-16 h-full relative -top-4">
+            <div class="bg-primary text-on-primary rounded-full w-12 h-12 flex items-center justify-center shadow-lg">
+                <span class="material-symbols-outlined">add</span>
+            </div>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-on-surface-variant hover:text-on-surface">
+            <span class="material-symbols-outlined text-xl mb-1">map</span>
+            <span class="text-[10px] leading-tight">Map</span>
+        </a>
+        <a href="#" id="mobile-logout-btn" class="flex flex-col items-center justify-center w-16 h-full text-on-surface-variant hover:text-error">
+            <span class="material-symbols-outlined text-xl mb-1">logout</span>
+            <span class="text-[10px] leading-tight">Logout</span>
+        </a>
+    </nav>
+
+    <script type="module" src="../src/js/main.js"></script>
+    <script type="module">
+        import { CATEGORIES } from '../src/js/ai-models.js';
+
+        (async function() {
+            // Auth Check
+            const token = localStorage.getItem('auth_token');
+            const userId = localStorage.getItem('user_id');
+            const userName = localStorage.getItem('user_name') || 'Citizen';
+            
+            if (!token || !userId) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            document.getElementById('greeting').innerText = `Welcome back, ${userName}.`;
+            const avatarEl = document.getElementById('user-menu-button');
+            if (avatarEl) avatarEl.innerText = userName.charAt(0).toUpperCase();
+
+            const handleLogout = () => {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user_id');
+                localStorage.removeItem('user_name');
+                window.location.href = '../login.html';
+            };
+            
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            document.getElementById('mobile-logout-btn').addEventListener('click', handleLogout);
+
+            const issuesContainer = document.getElementById('issues-list');
+            
+            // Helper to render MD3 Issue Card
+            const renderMD3IssueCard = (issue) => {
+                const catLabel = CATEGORIES.find(c => c.id === issue.category_id)?.label || issue.category_id;
+                
+                let accentColor = 'bg-secondary';
+                let priorityBadge = '';
+                
+                if (issue.priority === 'High' || issue.priority === 'Critical') {
+                    accentColor = 'bg-error';
+                    priorityBadge = `<span class="bg-error-container text-on-error-container font-label-sm text-label-sm px-2 py-1 rounded-full uppercase tracking-wide">High Priority</span>`;
+                }
+
+                let statusBadge = `<span class="bg-surface-variant text-on-surface-variant font-label-md text-label-md px-3 py-1 rounded-full font-medium">${issue.status}</span>`;
+                if (issue.status.toLowerCase() === 'in progress') {
+                    statusBadge = `<span class="bg-secondary-container text-on-secondary-container font-label-md text-label-md px-3 py-1 rounded-full font-medium">In Progress</span>`;
+                } else if (issue.status.toLowerCase() === 'resolved') {
+                    statusBadge = `<span class="bg-[#DEF7EC] text-[#03543F] font-label-md text-label-md px-3 py-1 rounded-full font-medium">Resolved</span>`;
+                }
+
+                // Try to use locally saved image, otherwise a placeholder
+                const localImg = localStorage.getItem('issue_img_' + issue.id);
+                const imgUrl = localImg || issue.image_url || 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400';
+
+                return `
+                <a href="track.html?id=${issue.id}" class="block">
+                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row overflow-hidden relative">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 ${accentColor}"></div>
+                        <div class="w-full sm:w-48 h-48 sm:h-auto bg-surface-container shrink-0">
+                            <img src="${imgUrl}" class="w-full h-full object-cover" alt="Issue thumbnail">
+                        </div>
+                        <div class="p-md flex-1 flex flex-col justify-between ml-1">
+                            <div>
+                                <div class="flex justify-between items-start mb-sm">
+                                    <div class="flex items-center gap-2">
+                                        ${priorityBadge}
+                                        <span class="text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-sm">schedule</span> ${new Date(issue.created_at || issue.date_reported).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    ${statusBadge}
+                                </div>
+                                <h4 class="font-headline-md text-headline-md text-on-background mb-xs">${catLabel} - ID-${issue.id.toString().padStart(4, '0')}</h4>
+                                <p class="font-body-md text-body-md text-on-surface-variant mb-md line-clamp-2">${issue.description}</p>
+                            </div>
+                            <div class="flex justify-between items-center text-on-surface-variant font-label-md text-label-md mt-4">
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">location_on</span>
+                                    Location: ${issue.lat ? issue.lat.toFixed(4) : ''}, ${issue.lng ? issue.lng.toFixed(4) : 'Unknown'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </a>`;
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:5005/api/complaints');
+                if (!response.ok) throw new Error('Failed to fetch');
+                
+                const allIssues = await response.json();
+                const myIssues = allIssues.filter(i => i.reported_by === userId).sort((a,b) => new Date(b.date_reported) - new Date(a.date_reported)) || [];
+                
+                // KPIs
+                document.getElementById('kpi-total').innerText = myIssues.length;
+                document.getElementById('kpi-pending').innerText = myIssues.filter(i => i.status.toLowerCase() === 'open').length;
+                document.getElementById('kpi-progress').innerText = myIssues.filter(i => i.status.toLowerCase() === 'in progress').length;
+                document.getElementById('kpi-resolved').innerText = myIssues.filter(i => i.status.toLowerCase() === 'resolved').length;
+
+                // Render Issues
+                let html = '<h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-md">Recent Issues</h3>';
+                
+                if (myIssues.length === 0) {
+                    html += `
+                        <div class="text-center p-xl border border-dashed border-outline-variant rounded-xl text-on-surface-variant mt-md">
+                            <span class="material-symbols-outlined text-5xl mb-sm">inbox</span>
+                            <p class="font-body-lg text-body-lg mb-4">No issues found. You haven't reported any infrastructure issues yet.</p>
+                            <a href="register-complaint.html" class="inline-flex items-center gap-2 px-lg py-2 bg-primary text-on-primary rounded-full font-label-md">
+                                <span class="material-symbols-outlined text-sm">add</span> Report Issue
+                            </a>
+                        </div>
+                    `;
+                    issuesContainer.innerHTML = html;
+                } else {
+                    html += myIssues.map(renderMD3IssueCard).join('');
+                    issuesContainer.innerHTML = html;
+                }
+                
+                // Render Map
+                if (myIssues.length > 0) {
+                    const firstIssue = myIssues[0];
+                    const lat = firstIssue.lat || 28.6139;
+                    const lng = firstIssue.lng || 77.2090;
+                    document.getElementById('dashboard-map-container').innerHTML = `
+                        <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=${lng-0.01}%2C${lat-0.01}%2C${lng+0.01}%2C${lat+0.01}&amp;layer=mapnik&amp;marker=${lat}%2C${lng}"></iframe>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-surface-container-lowest to-transparent p-4 pt-12 pointer-events-none">
+                            <p class="font-label-md text-label-md text-on-background font-medium flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-sm">my_location</span>
+                                Active issues near you
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('dashboard-map-container').innerHTML = `
+                        <div class="w-full h-full flex flex-col items-center justify-center text-on-surface-variant bg-surface-container-low">
+                            <span class="material-symbols-outlined text-3xl mb-2">map</span>
+                            <span class="text-xs font-medium">No active issues to map</span>
+                        </div>
+                    `;
+                }
+                
+            } catch (err) {
+                console.error(err);
+                issuesContainer.innerHTML = `
+                    <div class="p-4 bg-error-container text-on-error-container rounded-lg">
+                        Connection Error. Could not load data from the backend.
+                    </div>
+                `;
+            }
+        })();
+    </script>
+</body>
+</html>

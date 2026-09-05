@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en" class="light h-full">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Report - CivicAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="../src/css/style.css">
+    <style>
+        .timeline-line {
+            position: absolute;
+            left: 20px;
+            top: 40px;
+            bottom: -16px;
+            width: 2px;
+            z-index: 0;
+        }
+        .timeline-item:last-child .timeline-line {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-full flex overflow-hidden">
+    
+    <!-- SideNavBar -->
+    <aside class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface border-r border-outline-variant flex-col p-md gap-sm z-50">
+        <div class="mb-lg px-md pt-sm">
+            <div class="p-xl border-b border-surface-container-highest shrink-0 flex items-center gap-sm">
+            <img src="/logo.png" alt="CivicAI Logo" class="w-10 h-10 rounded-full object-cover shadow-sm bg-white">
+            <div>
+                <h1 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">CivicAI</h1>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">City Services Portal</p>
+            </div>
+        </div>
+        </div>
+        <nav class="flex-1 flex flex-col gap-xs">
+            <a href="dashboard.html" class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-md text-label-md">Dashboard</span>
+            </a>
+            <a href="dashboard.html" class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+                <span class="material-symbols-outlined">assignment</span>
+                <span class="font-label-md text-label-md">My Issues</span>
+            </a>
+            <a href="register-complaint.html" class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+                <span class="material-symbols-outlined">add_circle</span>
+                <span class="font-label-md text-label-md">Report Issue</span>
+            </a>
+            <a href="../map.html" class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+                <span class="material-symbols-outlined">map</span>
+                <span class="font-label-md text-label-md">Live Map</span>
+            </a>
+            <a href="#" class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+                <span class="material-symbols-outlined">notifications</span>
+                <span class="font-label-md text-label-md">Notifications</span>
+            </a>
+        </nav>
+        <div class="mt-auto pb-4">
+            <a href="#" id="logout-btn" class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-error-container hover:text-error rounded-lg transition-colors">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="font-label-md text-label-md">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col md:ml-64 h-full relative overflow-y-auto w-full">
+        <!-- TopAppBar -->
+        <header class="hidden md:flex fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-surface border-b border-outline-variant justify-between items-center h-16 px-xl transition-colors">
+            <div class="flex items-center">
+                <span class="font-headline-md text-headline-md text-primary font-bold">Track Complaint</span>
+            </div>
+            <div class="flex items-center gap-lg relative">
+                <button type="button" class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center border border-outline-variant font-bold text-on-secondary-container text-sm cursor-pointer" id="user-menu-button-top" aria-expanded="false" aria-haspopup="true">
+                    C
+                </button>
+                <div class="hidden origin-top-right absolute right-0 top-10 mt-2 w-48 rounded-xl shadow-lg py-1 bg-surface ring-1 ring-black ring-opacity-5 focus:outline-none z-50 border border-outline-variant" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button-top" tabindex="-1" id="user-menu-dropdown">
+                    <div class="px-4 py-2 border-b border-surface-container-highest">
+                        <p class="font-label-md text-on-surface truncate" id="nav-user-email">citizen@example.com</p>
+                        <p class="font-label-sm text-on-surface-variant">Citizen</p>
+                    </div>
+                    <a href="#" class="block px-4 py-2 font-label-md text-on-surface hover:bg-surface-container-high transition-colors" role="menuitem" tabindex="-1">Settings</a>
+                    <a href="#" class="block px-4 py-2 font-label-md text-error hover:bg-error-container transition-colors" role="menuitem" tabindex="-1" id="logout-btn-top">Sign out</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Mobile Header -->
+        <header class="md:hidden flex items-center justify-between p-4 bg-surface border-b border-outline-variant sticky top-0 z-40">
+            <a href="dashboard.html" class="text-on-surface-variant">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold">Track</span>
+            <div class="w-6"></div> 
+        </header>
+
+        <!-- Canvas Content -->
+        <div class="p-4 md:p-xl md:mt-16 w-full space-y-lg pb-24 md:pb-xl" id="main-content">
+            
+            <!-- Loading State -->
+            <div id="loading-state" class="flex flex-col items-center justify-center py-20 text-center">
+                <div class="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4 mx-auto"></div>
+                <p class="font-label-md text-on-surface-variant">Loading tracking data...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state" class="hidden flex flex-col items-center justify-center py-20 text-center">
+                <div class="w-20 h-20 bg-error-container rounded-full flex items-center justify-center text-error mb-6">
+                    <span class="material-symbols-outlined text-4xl">error_outline</span>
+                </div>
+                <h2 class="font-headline-md text-headline-md text-on-surface mb-2" id="error-title">Complaint Not Found</h2>
+                <p class="font-body-md text-on-surface-variant mb-8 max-w-[448px]" id="error-message">The requested complaint could not be found or you do not have permission to view it.</p>
+                <a href="dashboard.html" class="px-6 py-2 bg-primary text-on-primary rounded-lg font-label-md">Back to Dashboard</a>
+            </div>
+
+            <!-- Tracking View -->
+            <div id="tracking-view" class="hidden space-y-lg">
+                
+                <!-- Page Header -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-md mb-xl">
+                    <div>
+                        <div class="flex items-center gap-2 text-sm text-on-surface-variant mb-2">
+                            <a href="dashboard.html" class="hover:text-primary transition-colors">Reports</a>
+                            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                            <span class="font-medium text-on-surface">Tracking</span>
+                        </div>
+                        <h2 class="font-display-lg text-display-lg text-primary font-bold mb-2" id="ui-id">REP-...</h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm">schedule</span> Reported on <span id="ui-date">...</span>
+                        </p>
+                    </div>
+                    <div>
+                        <span id="ui-status-badge" class="inline-flex items-center gap-2 px-lg py-sm rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md font-bold">
+                            <span class="w-2 h-2 rounded-full bg-outline-variant mr-1"></span> Unknown
+                        </span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+                    
+                    <!-- LEFT COLUMN -->
+                    <div class="lg:col-span-7 flex flex-col gap-lg">
+                        
+                        <!-- Summary Card -->
+                        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md md:p-lg flex flex-col sm:flex-row gap-6 shadow-sm relative overflow-hidden">
+                            <div id="priority-band" class="absolute left-0 top-0 bottom-0 w-1.5 bg-outline-variant"></div>
+                            
+                            <div class="w-full sm:w-48 h-48 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+                                <img id="issue-img" class="w-full h-full object-cover grayscale opacity-80" src="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400" alt="Issue photo"/>
+                            </div>
+                            
+                            <div class="flex flex-col justify-center flex-grow">
+                                <h3 class="font-headline-md text-headline-md text-on-surface mb-sm capitalize" id="ui-category">Issue Category</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant mb-md" id="ui-desc">...</p>
+                                
+                                <div class="grid grid-cols-2 gap-4 mt-auto">
+                                    <div class="bg-surface-container-low p-3 rounded-lg border border-outline-variant">
+                                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">AI Priority Score</p>
+                                        <p class="font-headline-md text-headline-md font-bold flex items-center gap-1" id="ui-score-wrap">
+                                            <span class="material-symbols-outlined text-[20px]">warning</span>
+                                            <span id="ui-score">0/100</span>
+                                        </p>
+                                    </div>
+                                    <div class="bg-surface-container-low p-3 rounded-lg border border-outline-variant flex flex-col justify-center">
+                                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Coordinates</p>
+                                        <p class="font-label-md text-label-md text-on-surface font-bold flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[16px]">location_on</span>
+                                            <span id="ui-coords">0.00, 0.00</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Department Info & Map Bento -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md md:p-lg shadow-sm flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-[18px]">business</span> Assigned Department
+                                    </h3>
+                                    <p class="font-headline-md text-headline-md text-on-surface mb-2">Public Works Division</p>
+                                    <p class="font-body-md text-body-md text-on-surface-variant">Relevant crew will be dispatched based on priority assessment.</p>
+                                </div>
+                                <div class="mt-xl">
+                                    <div class="text-center p-3 bg-surface-container-high text-on-surface-variant font-label-md rounded-lg border border-outline-variant">
+                                        Department contact information pending
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="rounded-xl overflow-hidden border border-outline-variant shadow-sm h-48 md:h-full relative" id="track-map">
+                                <div class="w-full h-full bg-surface-container flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-outline-variant">map</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: TIMELINE -->
+                    <div class="lg:col-span-5">
+                        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md md:p-lg shadow-sm h-full flex flex-col">
+                            <h3 class="font-headline-lg text-headline-lg-mobile text-primary mb-xl border-b border-outline-variant pb-4">Status Timeline</h3>
+                            
+                            <div class="relative pl-2 flex-grow" id="timeline-container">
+                                <!-- Dynamically rendered timeline items -->
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex flex-col gap-3 pt-xl mt-4 border-t border-outline-variant">
+                                <button id="btn-ai-result" class="bg-secondary hover:opacity-90 text-on-secondary py-3 px-6 rounded-lg font-label-md text-label-md font-bold flex items-center justify-center gap-2 transition-opacity shadow-sm">
+                                    <span class="material-symbols-outlined">analytics</span>
+                                    View AI Analysis
+                                </button>
+                                <a href="dashboard.html" class="bg-surface-container-lowest hover:bg-surface-container-high text-primary border-2 border-primary py-3 px-6 rounded-lg font-label-md text-label-md font-bold flex items-center justify-center gap-2 transition-colors">
+                                    <span class="material-symbols-outlined">dashboard</span>
+                                    Back to Dashboard
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../src/js/main.js"></script>
+    <script type="module">
+        import { CATEGORIES } from '../src/js/ai-models.js';
+
+        (async function() {
+            const token = localStorage.getItem('auth_token');
+            const currentUserId = localStorage.getItem('user_id');
+            
+            if (!token || !currentUserId) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.removeItem('auth_token');
+                    window.location.href = '../login.html';
+                });
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const complaintId = urlParams.get('id');
+
+            if (!complaintId) {
+                showError("Invalid Request", "No complaint ID specified in the URL.");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:5005/api/complaints', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch complaints');
+                
+                const data = await response.json();
+                const complaint = data.find(c => c.id.toString() === complaintId);
+
+                if (!complaint) {
+                    showError("Not Found", `Complaint ID-${complaintId} does not exist.`);
+                    return;
+                }
+
+                if (complaint.reported_by !== currentUserId) {
+                    showError("Unauthorized", "You do not have permission to view this complaint.");
+                    return;
+                }
+
+                renderTracking(complaint);
+
+            } catch (err) {
+                console.error(err);
+                showError("System Error", "Could not load tracking data. Please try again later.");
+            }
+        })();
+
+        function showError(title, message) {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('tracking-view').classList.add('hidden');
+            const errState = document.getElementById('error-state');
+            errState.classList.remove('hidden');
+            document.getElementById('error-title').innerText = title;
+            document.getElementById('error-message').innerText = message;
+        }
+
+        function renderTracking(c) {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('tracking-view').classList.remove('hidden');
+
+            document.getElementById('ui-id').innerText = `REP-${c.id.toString().padStart(4, '0')}`;
+            
+            const catLabel = CATEGORIES.find(cat => cat.id === c.category_id)?.label || c.category_id || 'Unknown';
+            document.getElementById('ui-category').innerText = catLabel;
+            
+            const d = new Date(c.date_reported || c.created_at);
+            document.getElementById('ui-date').innerText = isNaN(d) ? 'Unknown' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            
+            document.getElementById('ui-desc').innerText = c.description || 'No description provided';
+            
+            const lat = c.lat || 28.6139;
+            const lng = c.lng || 77.2090;
+            document.getElementById('ui-coords').innerText = `${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`;
+
+            const localImg = localStorage.getItem('issue_img_' + c.id);
+            if (localImg || c.image_url) {
+                document.getElementById('issue-img').src = localImg || c.image_url;
+                document.getElementById('issue-img').classList.remove('grayscale');
+            }
+
+            // Map
+            document.getElementById('track-map').innerHTML = `
+                <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=${lng-0.005}%2C${lat-0.005}%2C${lng+0.005}%2C${lat+0.005}&amp;layer=mapnik&amp;marker=${lat}%2C${lng}"></iframe>
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="bg-primary/20 w-16 h-16 rounded-full absolute animate-ping"></div>
+                </div>
+            `;
+
+            // Priority
+            const scoreWrap = document.getElementById('ui-score-wrap');
+            const scoreText = document.getElementById('ui-score');
+            const band = document.getElementById('priority-band');
+            
+            const score = c.severity_score !== undefined && c.severity_score !== null ? c.severity_score : 0;
+            scoreText.innerText = `${score}/100`;
+            
+            if (c.priority === 'Critical') {
+                scoreWrap.className = 'font-headline-md text-headline-md font-bold flex items-center gap-1 text-error';
+                band.className = 'absolute left-0 top-0 bottom-0 w-1.5 bg-error';
+            } else if (c.priority === 'High') {
+                scoreWrap.className = 'font-headline-md text-headline-md font-bold flex items-center gap-1 text-[#EA580C]';
+                band.className = 'absolute left-0 top-0 bottom-0 w-1.5 bg-[#EA580C]';
+            } else if (c.priority === 'Medium') {
+                scoreWrap.className = 'font-headline-md text-headline-md font-bold flex items-center gap-1 text-[#F59E0B]';
+                band.className = 'absolute left-0 top-0 bottom-0 w-1.5 bg-[#F59E0B]';
+            } else {
+                scoreWrap.className = 'font-headline-md text-headline-md font-bold flex items-center gap-1 text-on-surface-variant';
+                band.className = 'absolute left-0 top-0 bottom-0 w-1.5 bg-outline-variant';
+            }
+
+            // Status Badge
+            const statusBadge = document.getElementById('ui-status-badge');
+            let statusDot = 'bg-outline-variant';
+            let statusBg = 'bg-surface-container-high';
+            let statusColor = 'text-on-surface';
+            let statusText = c.status || 'open';
+
+            if (c.status.toLowerCase() === 'open') {
+                statusDot = 'bg-[#EA580C]';
+                statusBg = 'bg-[#FFEDD5]';
+                statusColor = 'text-[#9A3412]';
+                statusText = 'Reported';
+            } else if (c.status.toLowerCase() === 'in progress') {
+                statusDot = 'bg-secondary';
+                statusBg = 'bg-secondary-container';
+                statusColor = 'text-on-secondary-container';
+                statusText = 'In Progress';
+            } else if (c.status.toLowerCase() === 'resolved') {
+                statusDot = 'bg-[#059669]';
+                statusBg = 'bg-[#D1FAE5]';
+                statusColor = 'text-[#065F46]';
+                statusText = 'Resolved';
+            }
+
+            statusBadge.className = `inline-flex items-center gap-2 px-lg py-sm rounded-full ${statusBg} ${statusColor} font-label-md font-bold`;
+            statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full ${statusDot}"></span> ${statusText}`;
+
+            // Timeline
+            const tContainer = document.getElementById('timeline-container');
+            const cStatus = c.status.toLowerCase();
+            
+            const stages = [
+                { id: 'reported', label: 'Report Submitted', icon: 'check', activeIf: ['open', 'in progress', 'resolved'] },
+                { id: 'ai', label: 'AI Analysis Completed', icon: 'smart_toy', activeIf: ['open', 'in progress', 'resolved'] },
+                { id: 'assigned', label: 'Assigned to Department', icon: 'assignment_ind', activeIf: ['in progress', 'resolved'] },
+                { id: 'progress', label: 'Repair In Progress', icon: 'construction', activeIf: ['in progress', 'resolved'] },
+                { id: 'resolved', label: 'Issue Resolved', icon: 'done_all', activeIf: ['resolved'] }
+            ];
+
+            let html = '';
+            stages.forEach((stage, index) => {
+                const isActive = stage.activeIf.includes(cStatus);
+                const isCurrent = isActive && (index === stages.length - 1 || !stages[index+1].activeIf.includes(cStatus));
+                
+                let iconBg = 'bg-surface-container border border-outline-variant text-outline-variant';
+                let titleColor = 'text-on-surface-variant font-medium';
+                let subText = 'Pending';
+                let lineBg = isActive && !isCurrent ? 'bg-secondary' : 'bg-surface-container-highest';
+
+                if (isActive) {
+                    if (isCurrent) {
+                        iconBg = 'bg-surface-container-lowest border-2 border-secondary text-secondary shadow-md';
+                        titleColor = 'text-primary font-bold';
+                        subText = 'Current Stage';
+                    } else {
+                        iconBg = 'bg-secondary text-on-secondary border-secondary';
+                        titleColor = 'text-on-surface font-bold';
+                        subText = 'Completed';
+                    }
+                }
+                
+                if (isActive && index === 0) {
+                    subText = isNaN(d) ? 'Completed' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                }
+
+                html += `
+                    <div class="timeline-item relative flex items-start gap-4 mb-xl">
+                        <div class="timeline-line ${lineBg}"></div>
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center z-10 shrink-0 ${iconBg}">
+                            <span class="material-symbols-outlined text-[20px] ${isCurrent ? 'animate-pulse' : ''}" ${isActive ? 'style="font-variation-settings: \'FILL\' 1;"' : ''}>${stage.icon}</span>
+                        </div>
+                        <div class="pt-2">
+                            <p class="font-label-md text-label-md ${titleColor}">${stage.label}</p>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant mt-1">${subText}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            tContainer.innerHTML = html;
+
+            const aiBtn = document.getElementById('btn-ai-result');
+            aiBtn.addEventListener('click', () => {
+                sessionStorage.setItem('last_complaint_result', JSON.stringify(c));
+                window.location.href = 'ai-analysis-result.html';
+            });
+        }
+    </script>
+</body>
+</html>

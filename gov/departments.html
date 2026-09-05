@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Departments - CivicAI</title>
+  <link rel="stylesheet" href="../src/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-surface text-navy h-screen flex font-sans antialiased overflow-hidden">
+  
+  <!-- Sidebar -->
+  <div id="sidebar-container" class="shrink-0 z-40 hidden md:block"></div>
+
+  <!-- Mobile Nav Toggle -->
+  <button id="mobile-menu-btn" class="md:hidden absolute top-4 left-4 z-50 bg-white p-2 rounded-lg shadow text-navy">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
+
+  <div id="mobile-sidebar" class="md:hidden fixed inset-0 z-40 bg-black/50 hidden transition-opacity">
+    <div id="mobile-sidebar-inner" class="w-64 h-full bg-white transform -translate-x-full transition-transform"></div>
+  </div>
+
+  <!-- Main Workspace -->
+  <main class="flex-grow flex flex-col h-full overflow-y-auto bg-slate-50 relative">
+    
+    <!-- Disclaimer Banner -->
+    <div class="bg-status-medium text-white px-6 py-3 flex items-center justify-center gap-2 text-sm font-bold shadow-sm z-30">
+      <span class="material-symbols-outlined text-[20px]">info</span>
+      <span>Department assignment data is not currently available in the backend. Showing global workload readiness based on existing complaint data.</span>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white border-b border-surface-border px-6 md:px-10 py-5 flex flex-col md:flex-row justify-between md:items-center gap-4 sticky top-0 z-20 shadow-sm md:ml-0 ml-12">
+      <div>
+        <h1 class="text-2xl font-black text-navy tracking-tight flex items-center gap-2">
+          <span class="material-symbols-outlined text-action">domain</span> Department Workload Readiness
+        </h1>
+        <p class="text-sm text-slate-500 font-medium">Categorized view of existing complaints.</p>
+      </div>
+      <button id="btn-refresh" class="btn-secondary px-4 py-2 flex items-center gap-2 text-sm shadow-sm bg-white">
+        <span class="material-symbols-outlined text-[18px]">refresh</span> Refresh
+      </button>
+    </header>
+
+    <div class="p-6 md:p-10 space-y-8 max-w-[1600px] mx-auto w-full">
+      
+      <!-- Loading State -->
+      <div id="dept-loading" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-surface-border">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-action mb-4"></div>
+        <p class="text-slate-600 font-bold">Aggregating workload data...</p>
+      </div>
+
+      <div id="dept-content" class="hidden space-y-8">
+        
+        <!-- Global Workload Overview -->
+        <section>
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-action">bar_chart</span> Global Workload Overview
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Stats -->
+            <div class="lg:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="bg-white p-5 rounded-xl border border-surface-border shadow-sm flex flex-col justify-between">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total Issues</span>
+                <span id="stat-total" class="text-3xl font-black text-navy">0</span>
+              </div>
+              <div class="bg-white p-5 rounded-xl border border-surface-border shadow-sm flex flex-col justify-between">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Open</span>
+                <span id="stat-open" class="text-3xl font-black text-slate-500">0</span>
+              </div>
+              <div class="bg-white p-5 rounded-xl border border-surface-border shadow-sm flex flex-col justify-between">
+                <span class="text-xs font-bold text-status-medium uppercase tracking-wider mb-2">In Progress</span>
+                <span id="stat-prog" class="text-3xl font-black text-status-medium">0</span>
+              </div>
+              <div class="bg-white p-5 rounded-xl border border-surface-border shadow-sm flex flex-col justify-between">
+                <span class="text-xs font-bold text-status-resolved uppercase tracking-wider mb-2">Resolved</span>
+                <span id="stat-res" class="text-3xl font-black text-status-resolved">0</span>
+              </div>
+            </div>
+            
+            <!-- Chart -->
+            <div class="bg-white p-5 rounded-xl border border-surface-border shadow-sm flex items-center justify-center">
+              <div class="w-full max-w-[200px]">
+                <canvas id="workloadChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Department Conceptual Cards -->
+        <section>
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-action">grid_view</span> Concept Departments
+          </h2>
+          <div id="dept-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <!-- Populated via JS -->
+          </div>
+        </section>
+        
+      </div>
+    </div>
+  </main>
+
+  <!-- Limitation Modal -->
+  <div id="limitation-modal" class="fixed inset-0 z-50 bg-black/60 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-[448px] w-full p-8 text-center shadow-xl transform scale-95 transition-transform">
+      <div class="mx-auto w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-status-high mb-4">
+        <span class="material-symbols-outlined text-3xl">build_circle</span>
+      </div>
+      <h3 class="text-xl font-black text-navy mb-2">Feature Not Supported</h3>
+      <p class="text-slate-500 text-sm mb-6">
+        Department assignment is not currently supported because assignment data is not available in the backend. 
+        <br><br>
+        This interface is ready for future department assignment integration.
+      </p>
+      <button id="btn-close-modal" class="w-full btn-primary py-2">Understood</button>
+    </div>
+  </div>
+
+  <script type="module" src="../src/js/main.js"></script>
+  <script type="module">
+    (async function() {
+      
+      const token = localStorage.getItem('auth_token');
+      const role = localStorage.getItem('user_role');
+      
+      // Allow gov, admin, government
+      if (!token || (role !== 'admin' && role !== 'gov' && role !== 'government')) {
+        window.location.href = '../login.html';
+        return;
+      }
+
+      // Sidebar
+      const sidebarHtml = window.Components.GovernmentSidebar('departments');
+      document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+      document.getElementById('mobile-sidebar-inner').innerHTML = sidebarHtml;
+
+      // Mobile menu
+      const mobBtn = document.getElementById('mobile-menu-btn');
+      const mobSidebar = document.getElementById('mobile-sidebar');
+      const mobInner = document.getElementById('mobile-sidebar-inner');
+      mobBtn.addEventListener('click', () => {
+        mobSidebar.classList.remove('hidden');
+        setTimeout(() => {
+          mobSidebar.classList.remove('bg-black/0');
+          mobInner.classList.remove('-translate-x-full');
+        }, 10);
+      });
+      mobSidebar.addEventListener('click', (e) => {
+        if (e.target === mobSidebar) {
+          mobInner.classList.add('-translate-x-full');
+          setTimeout(() => mobSidebar.classList.add('hidden'), 300);
+        }
+      });
+
+      // Modal
+      const modal = document.getElementById('limitation-modal');
+      document.getElementById('btn-close-modal').addEventListener('click', () => {
+        modal.children[0].classList.add('scale-95');
+        setTimeout(() => modal.classList.replace('flex', 'hidden'), 150);
+      });
+      
+      window.showLimitationModal = () => {
+        modal.classList.replace('hidden', 'flex');
+        setTimeout(() => modal.children[0].classList.remove('scale-95'), 10);
+      };
+
+      let workloadChart = null;
+
+      const fetchData = async () => {
+        try {
+          const response = await fetch('http://127.0.0.1:5005/api/complaints', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (!response.ok) throw new Error('Failed to fetch data');
+          const complaints = await response.json();
+          processWorkload(complaints);
+        } catch (err) {
+          console.error(err);
+          document.getElementById('dept-loading').innerHTML = `
+            <div class="text-status-critical mb-2"><span class="material-symbols-outlined text-4xl">cloud_off</span></div>
+            <p class="text-navy font-bold">Failed to load workload data.</p>
+          `;
+        }
+      };
+
+      const processWorkload = (complaints) => {
+        
+        let tOpen = 0, tProg = 0, tRes = 0;
+        
+        // Departments Mapping
+        const depts = [
+          { name: 'Road / Infrastructure', icon: 'edit_road', keys: ['pothole', 'sidewalk'], count: 0, open: 0, prog: 0, res: 0 },
+          { name: 'Water Supply', icon: 'water_drop', keys: ['water_leak'], count: 0, open: 0, prog: 0, res: 0 },
+          { name: 'Electrical', icon: 'bolt', keys: ['streetlight'], count: 0, open: 0, prog: 0, res: 0 },
+          { name: 'Sanitation', icon: 'delete', keys: ['garbage'], count: 0, open: 0, prog: 0, res: 0 },
+          { name: 'Unmapped / Other', icon: 'category', keys: [], count: 0, open: 0, prog: 0, res: 0 } // Catch-all
+        ];
+
+        complaints.forEach(c => {
+          const s = (c.status || 'open').toLowerCase();
+          if (s === 'open') tOpen++;
+          else if (s === 'in progress' || s === 'in_progress') tProg++;
+          else if (s === 'resolved') tRes++;
+          else tOpen++;
+
+          const cat = c.category_id || 'unknown';
+          let matched = false;
+          
+          for (let i = 0; i < depts.length - 1; i++) {
+            if (depts[i].keys.includes(cat)) {
+              depts[i].count++;
+              if (s === 'open') depts[i].open++;
+              else if (s === 'in progress' || s === 'in_progress') depts[i].prog++;
+              else if (s === 'resolved') depts[i].res++;
+              else depts[i].open++;
+              matched = true;
+              break;
+            }
+          }
+
+          if (!matched) {
+            const other = depts[depts.length - 1];
+            other.count++;
+            if (s === 'open') other.open++;
+            else if (s === 'in progress' || s === 'in_progress') other.prog++;
+            else if (s === 'resolved') other.res++;
+            else other.open++;
+          }
+        });
+
+        // Global Update
+        document.getElementById('stat-total').innerText = complaints.length;
+        document.getElementById('stat-open').innerText = tOpen;
+        document.getElementById('stat-prog').innerText = tProg;
+        document.getElementById('stat-res').innerText = tRes;
+
+        // Chart
+        if (workloadChart) workloadChart.destroy();
+        const ctx = document.getElementById('workloadChart').getContext('2d');
+        workloadChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Open', 'In Progress', 'Resolved'],
+            datasets: [{
+              data: [tOpen, tProg, tRes],
+              backgroundColor: ['#64748b', '#eab308', '#22c55e'],
+              borderWidth: 0,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false }
+            },
+            cutout: '70%'
+          }
+        });
+
+        // Grid
+        const grid = document.getElementById('dept-grid');
+        grid.innerHTML = depts.map(d => `
+          <div class="bg-white rounded-2xl border border-surface-border shadow-sm flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-surface-border flex justify-between items-center bg-slate-50/50">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-white border border-surface-border flex items-center justify-center text-action shadow-sm">
+                  <span class="material-symbols-outlined">${d.icon}</span>
+                </div>
+                <div>
+                  <h3 class="font-bold text-navy leading-tight">${d.name}</h3>
+                  <p class="text-xs text-slate-500">${d.count} complaints</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="p-5 flex-grow space-y-4">
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-slate-600 font-medium">Open</span>
+                <span class="font-bold text-slate-800">${d.open}</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-status-medium font-medium">In Progress</span>
+                <span class="font-bold text-status-medium">${d.prog}</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-status-resolved font-medium">Resolved</span>
+                <span class="font-bold text-status-resolved">${d.res}</span>
+              </div>
+              
+              <div class="w-full bg-slate-100 rounded-full h-1.5 flex overflow-hidden mt-4">
+                <div style="width: ${(d.open/d.count*100)||0}%" class="bg-slate-400 h-full"></div>
+                <div style="width: ${(d.prog/d.count*100)||0}%" class="bg-status-medium h-full"></div>
+                <div style="width: ${(d.res/d.count*100)||0}%" class="bg-status-resolved h-full"></div>
+              </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border-t border-surface-border flex gap-3">
+              <a href="priority-queue.html" class="flex-1 btn-secondary text-center py-2 text-sm bg-white">View Queue</a>
+              <button onclick="window.showLimitationModal()" class="flex-1 btn-primary py-2 text-sm text-center">Assign</button>
+            </div>
+          </div>
+        `).join('');
+
+        document.getElementById('dept-loading').classList.add('hidden');
+        document.getElementById('dept-content').classList.remove('hidden');
+      };
+
+      document.getElementById('btn-refresh').addEventListener('click', () => {
+        document.getElementById('dept-content').classList.add('hidden');
+        document.getElementById('dept-loading').classList.remove('hidden');
+        fetchData();
+      });
+
+      fetchData();
+    })();
+  </script>
+</body>
+</html>

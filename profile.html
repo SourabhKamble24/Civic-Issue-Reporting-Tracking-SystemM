@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile & Notifications - CivicAI</title>
+  <link rel="stylesheet" href="./src/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-surface text-navy min-h-screen flex flex-col md:flex-row font-sans antialiased pb-20 md:pb-0">
+  
+  <!-- Navigation Containers -->
+  <div id="navbar-container" class="w-full sticky top-0 z-50 md:hidden"></div>
+  <div id="sidebar-container" class="shrink-0 z-40 hidden md:block"></div>
+
+  <!-- Mobile Sidebar Overlay (for Gov) -->
+  <button id="mobile-menu-btn" class="hidden absolute top-4 left-4 z-50 bg-white p-2 rounded-lg shadow text-navy">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
+  <div id="mobile-sidebar" class="md:hidden fixed inset-0 z-40 bg-black/50 hidden transition-opacity">
+    <div id="mobile-sidebar-inner" class="w-64 h-full bg-white transform -translate-x-full transition-transform"></div>
+  </div>
+
+  <main class="flex-grow flex flex-col h-full overflow-y-auto bg-slate-50 relative w-full">
+    
+    <header class="bg-white border-b border-surface-border px-6 py-8 flex flex-col gap-2">
+      <h1 class="text-3xl font-black text-navy tracking-tight">My Profile</h1>
+      <p class="text-sm text-slate-500 font-medium">Manage your personal information and view recent activity.</p>
+    </header>
+
+    <div class="p-6 md:p-8 space-y-8 max-w-[1200px] mx-auto w-full">
+      
+      <!-- Profile Header -->
+      <div class="bg-white rounded-2xl border border-surface-border shadow-sm p-6 md:p-8 flex items-center gap-6">
+        <div id="profile-avatar" class="w-20 h-20 rounded-full bg-action text-white text-3xl font-bold flex items-center justify-center shadow-md">
+          U
+        </div>
+        <div>
+          <h2 id="profile-name" class="text-2xl font-black text-navy">Name not available</h2>
+          <p id="profile-email" class="text-slate-500">Email not available</p>
+          <div class="mt-2">
+            <span id="profile-role" class="px-3 py-1 bg-slate-100 text-slate-600 rounded text-xs font-bold uppercase tracking-wider">
+              Citizen
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Complaint Updates (Notifications Mock) -->
+        <div class="bg-white rounded-2xl border border-surface-border shadow-sm overflow-hidden flex flex-col h-[500px]">
+          <div class="p-5 border-b border-surface-border flex items-center gap-2 bg-slate-50">
+            <span class="material-symbols-outlined text-action">notifications</span>
+            <h3 class="font-bold text-navy">Complaint Updates</h3>
+          </div>
+          <div id="notifications-list" class="flex-grow overflow-y-auto p-5 space-y-4">
+            <div class="flex justify-center items-center h-full text-slate-400">
+              <span class="material-symbols-outlined animate-spin text-2xl">refresh</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="bg-white rounded-2xl border border-surface-border shadow-sm overflow-hidden flex flex-col">
+          <div class="p-5 border-b border-surface-border flex items-center gap-2 bg-slate-50">
+            <span class="material-symbols-outlined text-slate-600">settings</span>
+            <h3 class="font-bold text-navy">Settings</h3>
+          </div>
+          
+          <div class="bg-status-medium/10 text-status-medium p-4 border-b border-status-medium/20 text-sm flex gap-3 items-start">
+            <span class="material-symbols-outlined text-[20px]">info</span>
+            <p><strong>Note:</strong> Settings persistence is not currently available in the backend. These toggles are for visual demonstration only.</p>
+          </div>
+
+          <div class="p-6 space-y-6">
+            
+            <div class="flex justify-between items-center">
+              <div>
+                <h4 class="font-bold text-navy text-sm">Preferred Language</h4>
+                <p class="text-xs text-slate-500">Select your dashboard language.</p>
+              </div>
+              <select class="bg-slate-50 border border-slate-200 rounded p-2 text-sm text-slate-700 outline-none">
+                <option>English</option>
+                <option>Hindi</option>
+                <option>Marathi</option>
+              </select>
+            </div>
+
+            <hr class="border-surface-border">
+
+            <div class="flex justify-between items-center">
+              <div>
+                <h4 class="font-bold text-navy text-sm">Email Notifications</h4>
+                <p class="text-xs text-slate-500">Receive emails for status updates.</p>
+              </div>
+              <div class="w-10 h-5 bg-action rounded-full relative cursor-pointer opacity-50">
+                <div class="w-4 h-4 bg-white rounded-full absolute top-0.5 right-0.5 shadow-sm"></div>
+              </div>
+            </div>
+
+            <hr class="border-surface-border">
+
+            <div class="flex justify-between items-center">
+              <div>
+                <h4 class="font-bold text-navy text-sm">High Contrast Mode</h4>
+                <p class="text-xs text-slate-500">Improve visibility and accessibility.</p>
+              </div>
+              <div class="w-10 h-5 bg-slate-200 rounded-full relative cursor-pointer">
+                <div class="w-4 h-4 bg-white rounded-full absolute top-0.5 left-0.5 shadow-sm"></div>
+              </div>
+            </div>
+
+            <hr class="border-surface-border">
+
+            <button class="text-status-critical font-bold text-sm hover:underline flex items-center gap-1">
+              <span class="material-symbols-outlined text-[18px]">lock_reset</span> Reset Password
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module" src="./src/js/main.js"></script>
+  <script type="module">
+    (async function() {
+      
+      const token = localStorage.getItem('auth_token');
+      const role = localStorage.getItem('user_role');
+      const email = localStorage.getItem('user_email');
+      // Supabase metadata doesn't automatically put full_name in a root localstorage key unless we did it. 
+      // We didn't save full_name to localStorage in login.html explicitly. 
+      // We can just use the email or "User" if name is missing.
+      
+      if (!token) {
+        window.location.href = './login.html';
+        return;
+      }
+
+      const isGov = (role === 'admin' || role === 'gov' || role === 'government');
+
+      // Setup Navigation Layout
+      if (isGov) {
+        document.getElementById('navbar-container').classList.add('hidden');
+        document.body.classList.remove('md:flex-col');
+        
+        const sidebarHtml = window.Components.GovernmentSidebar('profile');
+        document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+        document.getElementById('mobile-sidebar-inner').innerHTML = sidebarHtml;
+        
+        const mobBtn = document.getElementById('mobile-menu-btn');
+        mobBtn.classList.remove('hidden');
+        mobBtn.classList.add('flex');
+        
+        const mobSidebar = document.getElementById('mobile-sidebar');
+        const mobInner = document.getElementById('mobile-sidebar-inner');
+        
+        mobBtn.addEventListener('click', () => {
+          mobSidebar.classList.remove('hidden');
+          setTimeout(() => {
+            mobSidebar.classList.remove('bg-black/0');
+            mobInner.classList.remove('-translate-x-full');
+          }, 10);
+        });
+        
+        mobSidebar.addEventListener('click', (e) => {
+          if (e.target === mobSidebar) {
+            mobInner.classList.add('-translate-x-full');
+            setTimeout(() => mobSidebar.classList.add('hidden'), 300);
+          }
+        });
+      } else {
+        // Citizen
+        document.getElementById('sidebar-container').classList.add('hidden');
+        document.getElementById('mobile-menu-btn').classList.add('hidden');
+        const navHtml = window.Components.CitizenNavbar('profile');
+        document.getElementById('navbar-container').innerHTML = navHtml;
+        document.getElementById('navbar-container').classList.remove('hidden');
+
+        // Re-attach logout for citizen nav
+        setTimeout(() => {
+          const lBtn = document.getElementById('logout-btn');
+          if(lBtn) {
+            lBtn.addEventListener('click', () => {
+              localStorage.clear();
+              window.location.href = '/login.html';
+            });
+          }
+        }, 100);
+      }
+
+      // Populate Profile Details
+      document.getElementById('profile-email').innerText = email || 'Email not available';
+      document.getElementById('profile-role').innerText = isGov ? 'Government Official' : 'Citizen';
+      
+      // Avatar Letter
+      if (email) {
+        document.getElementById('profile-avatar').innerText = email.charAt(0).toUpperCase();
+      }
+
+      // Fetch Notifications (Complaint Updates)
+      try {
+        const response = await fetch('http://127.0.0.1:5005/api/complaints', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) throw new Error("Failed to load complaints");
+        
+        const allComplaints = await response.json();
+        
+        const userId = localStorage.getItem('user_id');
+        let filtered = allComplaints;
+
+        if (!isGov) {
+          if (!userId) {
+            filtered = []; // Honest limitation if association is impossible
+          } else {
+            filtered = allComplaints.filter(c => c.reported_by === userId);
+          }
+        }
+        // Basic sort by date desc
+        filtered.sort((a, b) => new Date(b.date_reported || b.created_at) - new Date(a.date_reported || a.created_at));
+        
+        // Take top 10
+        const recent = filtered.slice(0, 10);
+        const listEl = document.getElementById('notifications-list');
+
+        if (recent.length === 0) {
+          listEl.innerHTML = `
+            <div class="flex flex-col items-center justify-center text-slate-400 py-10">
+              <span class="material-symbols-outlined text-4xl mb-2">notifications_off</span>
+              <p class="text-sm">No recent activity found.</p>
+            </div>
+          `;
+        } else {
+          listEl.innerHTML = recent.map(c => {
+            const shortId = `REP-${c.id.toString().padStart(4, '0')}`;
+            const s = (c.status || 'open').toLowerCase();
+            const date = new Date(c.date_reported || c.created_at).toLocaleDateString();
+            
+            let icon = 'info';
+            let color = 'text-slate-500';
+            let bg = 'bg-slate-100';
+            let message = `Complaint ${shortId} was submitted.`;
+
+            if (s === 'resolved') {
+              icon = 'check_circle';
+              color = 'text-status-resolved';
+              bg = 'bg-status-resolved/10';
+              message = `Issue ${shortId} has been successfully resolved.`;
+            } else if (s === 'in progress' || s === 'in_progress') {
+              icon = 'engineering';
+              color = 'text-status-medium';
+              bg = 'bg-status-medium/10';
+              message = `Issue ${shortId} is currently in progress.`;
+            }
+
+            return `
+              <div class="flex gap-4 p-4 border border-surface-border rounded-xl hover:bg-slate-50 transition-colors">
+                <div class="w-10 h-10 rounded-full ${bg} ${color} flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-[20px]">${icon}</span>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-navy">${message}</p>
+                  <p class="text-xs text-slate-400 mt-1">${date}</p>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('notifications-list').innerHTML = `
+          <div class="text-sm text-status-critical p-4 bg-status-critical/10 rounded-xl">
+            Failed to load complaint updates.
+          </div>
+        `;
+      }
+
+    })();
+  </script>
+</body>
+</html>

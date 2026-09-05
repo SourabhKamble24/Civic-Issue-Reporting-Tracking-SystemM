@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Issue Details - CivicAI</title>
+  <link rel="stylesheet" href="./src/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+<body class="bg-surface text-navy min-h-screen flex flex-col font-sans antialiased pb-20">
+  
+  <div id="navbar-container"></div>
+
+  <!-- Duplicate Banner (Hidden by Default) -->
+  <div id="duplicate-banner" class="hidden bg-status-high text-white px-6 py-4 flex justify-between items-center sticky top-[64px] z-40 shadow-sm">
+    <div class="flex items-center gap-3">
+      <span class="material-symbols-outlined text-2xl">file_copy</span>
+      <div>
+        <p class="font-bold text-sm">Duplicate Issue Detected</p>
+        <p class="text-xs opacity-90">This complaint has been flagged by AI as a duplicate of another existing issue.</p>
+      </div>
+    </div>
+    <a id="btn-view-original" href="#" class="bg-white text-status-high px-4 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
+      View Original
+    </a>
+  </div>
+
+  <main class="flex-grow max-w-[1200px] mx-auto w-full px-4 md:px-8 py-8 space-y-8">
+    
+    <!-- Top Action Bar -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-surface-border pb-4">
+      <button onclick="window.history.back()" class="text-slate-500 hover:text-navy flex items-center gap-2 font-bold text-sm transition-colors">
+        <span class="material-symbols-outlined text-[20px]">arrow_back</span> Back
+      </button>
+      
+      <!-- Gov Action Panel -->
+      <div id="gov-action-panel" class="hidden flex items-center gap-3 bg-white p-2 rounded-lg border border-surface-border shadow-sm">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-2">Gov Actions:</span>
+        <select id="gov-status-select" class="bg-slate-50 border border-slate-200 text-sm font-bold text-navy rounded px-3 py-1.5 focus:ring-2 focus:ring-action outline-none">
+          <option value="open">Open</option>
+          <option value="in progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+        </select>
+        <button id="btn-update-status" class="btn-primary py-1.5 px-4 text-xs">Update Status</button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="flex flex-col items-center justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-action mb-4"></div>
+      <p class="text-slate-600 font-bold">Loading Issue Details...</p>
+    </div>
+
+    <div id="detail-content" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- LEFT COL: Details -->
+      <div class="lg:col-span-2 space-y-6">
+        
+        <!-- Header Info -->
+        <div class="bg-white p-6 md:p-8 rounded-2xl border border-surface-border shadow-sm">
+          <div class="flex justify-between items-start mb-4">
+            <span id="issue-id" class="text-sm font-mono font-bold text-slate-400">REP-0000</span>
+            <span id="issue-status" class="px-3 py-1 rounded text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600">Loading</span>
+          </div>
+          <h1 id="issue-category" class="text-3xl font-black text-navy capitalize mb-2">Category Name</h1>
+          <p id="issue-date" class="text-sm text-slate-500 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px]">calendar_today</span> <span id="date-text">Unknown</span>
+          </p>
+          
+          <hr class="my-6 border-surface-border">
+          
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Description</h3>
+          <p id="issue-desc" class="text-slate-700 leading-relaxed">No description provided.</p>
+        </div>
+
+        <!-- Location & Image Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Image -->
+          <div class="bg-white p-4 rounded-2xl border border-surface-border shadow-sm flex flex-col">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[16px]">image</span> Evidence Photo
+            </h3>
+            <div class="flex-grow bg-slate-100 rounded-xl overflow-hidden min-h-[200px] flex items-center justify-center">
+              <img id="issue-image" src="" alt="Issue evidence" class="w-full h-full object-cover hidden">
+              <span id="no-image-text" class="text-slate-400 text-sm font-bold flex flex-col items-center gap-2">
+                <span class="material-symbols-outlined text-3xl">broken_image</span> No image uploaded
+              </span>
+            </div>
+          </div>
+
+          <!-- Map -->
+          <div class="bg-white p-4 rounded-2xl border border-surface-border shadow-sm flex flex-col">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[16px]">location_on</span> Precise Location
+            </h3>
+            <div id="mini-map" class="flex-grow rounded-xl overflow-hidden min-h-[200px] border border-slate-200 z-0"></div>
+            <p id="issue-coords" class="mt-3 text-xs font-mono text-slate-500 text-center">0.0000, 0.0000</p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- RIGHT COL: AI Explainability -->
+      <div class="space-y-6">
+        
+        <div class="bg-white rounded-2xl border border-surface-border shadow-sm overflow-hidden sticky top-24">
+          <div class="p-5 border-b border-surface-border bg-slate-50/50 flex justify-between items-center">
+            <h3 class="font-bold text-navy flex items-center gap-2">
+              <span class="material-symbols-outlined text-action">memory</span> AI Explainability
+            </h3>
+          </div>
+          
+          <div class="p-6">
+            
+            <!-- Overall Score -->
+            <div class="text-center mb-8">
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Overall Severity Score</p>
+              <div class="inline-flex items-center justify-center w-24 h-24 rounded-full border-4 border-slate-100 relative mb-3" id="score-ring">
+                <span class="text-3xl font-black text-navy" id="score-text">0</span>
+              </div>
+              <div>
+                <span id="priority-badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-500">
+                  Unknown
+                </span>
+              </div>
+            </div>
+
+            <hr class="border-surface-border mb-6">
+            
+            <p class="text-xs text-slate-500 font-medium mb-4">This priority was calculated using the following real AI factors from the backend:</p>
+
+            <!-- Factors -->
+            <div class="space-y-5">
+              
+              <!-- Image Confidence -->
+              <div>
+                <div class="flex justify-between text-xs font-bold mb-1">
+                  <span class="text-slate-600 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> Image Confidence</span>
+                  <span class="text-navy" id="val-image">0%</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2">
+                  <div id="bar-image" class="bg-action h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- Text Urgency -->
+              <div>
+                <div class="flex justify-between text-xs font-bold mb-1">
+                  <span class="text-slate-600 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">text_snippet</span> Text Urgency</span>
+                  <span class="text-navy" id="val-text">0%</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2">
+                  <div id="bar-text" class="bg-status-high h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- Location Importance -->
+              <div>
+                <div class="flex justify-between text-xs font-bold mb-1">
+                  <span class="text-slate-600 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">share_location</span> Location Importance</span>
+                  <span class="text-navy" id="val-loc">0%</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2">
+                  <div id="bar-loc" class="bg-status-medium h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- Duplicate Score -->
+              <div>
+                <div class="flex justify-between text-xs font-bold mb-1">
+                  <span class="text-slate-600 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">file_copy</span> Duplicate Similarity</span>
+                  <span class="text-navy" id="val-dup">0%</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2">
+                  <div id="bar-dup" class="bg-slate-400 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="./src/js/main.js"></script>
+  <script type="module">
+    import { CATEGORIES } from './src/js/ai-models.js';
+
+    (async function() {
+      
+      const token = localStorage.getItem('auth_token');
+      const role = localStorage.getItem('user_role');
+      
+      // Navbar Injection
+      const navContainer = document.getElementById('navbar-container');
+      if (token && (role === 'admin' || role === 'gov' || role === 'government')) {
+        navContainer.innerHTML = window.Components.CitizenNavbar('');
+        // Show gov actions
+        document.getElementById('gov-action-panel').classList.remove('hidden');
+        document.getElementById('gov-action-panel').classList.add('flex');
+      } else if (token) {
+        navContainer.innerHTML = window.Components.CitizenNavbar('');
+      } else {
+        navContainer.innerHTML = `
+          <nav class="bg-white border-b border-surface-border">
+            <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+              <a href="/index.html" class="flex items-center gap-2"><span class="material-symbols-outlined text-action text-3xl">account_balance</span><span class="font-bold text-xl text-navy">CivicAI</span></a>
+              <a href="/login.html" class="text-sm font-bold text-action">Sign In</a>
+            </div>
+          </nav>
+        `;
+      }
+
+      // Logout handler if injected
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('auth_token');
+          window.location.href = './login.html';
+        });
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetId = urlParams.get('id');
+
+      if (!targetId) {
+        alert("No issue ID provided in URL.");
+        window.location.href = '/';
+        return;
+      }
+
+      // Fetch all to find the specific issue (since GET /id is restricted from being created)
+      try {
+        // We pass token if we have it, although API might be public for reading
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        const response = await fetch('http://127.0.0.1:5005/api/complaints', { headers });
+        if (!response.ok) throw new Error("Failed to fetch complaints");
+        
+        const complaints = await response.json();
+        
+        // Find exact complaint (ID might be int or string, safe compare)
+        const issue = complaints.find(c => c.id.toString() === targetId);
+        
+        if (!issue) throw new Error("Complaint not found in data.");
+
+        renderIssue(issue);
+        
+      } catch (err) {
+        console.error(err);
+        document.getElementById('loading-state').innerHTML = `
+          <div class="text-status-critical mb-2"><span class="material-symbols-outlined text-4xl">error</span></div>
+          <p class="text-navy font-bold">Failed to load issue.</p>
+          <p class="text-sm text-slate-500 mt-2">${err.message}</p>
+        `;
+      }
+
+      function getBadgeClass(p) {
+        if (p === 'Critical') return 'bg-status-critical/10 text-status-critical border border-status-critical/20';
+        if (p === 'High') return 'bg-status-high/10 text-status-high border border-status-high/20';
+        if (p === 'Medium') return 'bg-status-medium/10 text-status-medium border border-status-medium/20';
+        return 'bg-status-resolved/10 text-status-resolved border border-status-resolved/20';
+      }
+
+      function renderIssue(issue) {
+        // Hide loader, show content
+        document.getElementById('loading-state').classList.add('hidden');
+        document.getElementById('detail-content').classList.remove('hidden');
+
+        // Header
+        document.getElementById('issue-id').innerText = `REP-${issue.id.toString().padStart(4, '0')}`;
+        
+        const catLabel = CATEGORIES.find(c => c.id === issue.category_id)?.label || issue.category_id;
+        document.getElementById('issue-category').innerText = catLabel;
+        
+        const date = new Date(issue.date_reported || issue.created_at);
+        document.getElementById('date-text').innerText = isNaN(date) ? 'Unknown' : date.toLocaleDateString();
+        
+        // Status Badge
+        const stat = (issue.status || 'open').toLowerCase();
+        const statBadge = document.getElementById('issue-status');
+        if (stat === 'resolved') {
+          statBadge.className = 'px-3 py-1 rounded text-xs font-bold uppercase tracking-wider bg-status-resolved/10 text-status-resolved border border-status-resolved/20';
+          statBadge.innerText = 'Resolved';
+        } else if (stat === 'in_progress' || stat === 'in progress') {
+          statBadge.className = 'px-3 py-1 rounded text-xs font-bold uppercase tracking-wider bg-status-medium/10 text-status-medium border border-status-medium/20';
+          statBadge.innerText = 'In Progress';
+        } else {
+          statBadge.className = 'px-3 py-1 rounded text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200';
+          statBadge.innerText = 'Open';
+        }
+
+        // Set select value if gov
+        const select = document.getElementById('gov-status-select');
+        if (select) {
+          select.value = (stat === 'in progress' || stat === 'in_progress') ? 'in progress' : stat;
+        }
+
+        // Description
+        document.getElementById('issue-desc').innerText = issue.description || 'No description provided.';
+
+        // Image
+        if (issue.image_url) {
+          const imgEl = document.getElementById('issue-image');
+          imgEl.src = issue.image_url;
+          imgEl.classList.remove('hidden');
+          document.getElementById('no-image-text').classList.add('hidden');
+        }
+
+        // Map
+        if (issue.lat && issue.lng) {
+          document.getElementById('issue-coords').innerText = `${parseFloat(issue.lat).toFixed(6)}, ${parseFloat(issue.lng).toFixed(6)}`;
+          const map = L.map('mini-map', { zoomControl: false, dragging: false, scrollWheelZoom: false }).setView([issue.lat, issue.lng], 16);
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+          
+          const color = (issue.priority === 'Critical') ? '#ef4444' : 
+                        (issue.priority === 'High') ? '#f97316' : 
+                        (issue.priority === 'Medium') ? '#eab308' : '#22c55e';
+                        
+          L.circleMarker([issue.lat, issue.lng], { radius: 10, fillColor: color, color: '#fff', weight: 3, fillOpacity: 1 }).addTo(map);
+          setTimeout(() => map.invalidateSize(), 500);
+        } else {
+          document.getElementById('mini-map').innerHTML = `<div class="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50"><span class="material-symbols-outlined text-4xl">location_off</span></div>`;
+        }
+
+        // Duplicate Check
+        if (issue.is_duplicate) {
+          document.getElementById('duplicate-banner').classList.remove('hidden');
+          if (issue.duplicate_of) {
+            document.getElementById('btn-view-original').href = `issue-detail.html?id=${issue.duplicate_of}`;
+          } else {
+            document.getElementById('btn-view-original').classList.add('hidden');
+          }
+        }
+
+        // AI Explainability Values
+        const score = issue.severity_score || 0;
+        document.getElementById('score-text').innerText = score;
+        
+        // Ring color based on priority
+        const ring = document.getElementById('score-ring');
+        if (issue.priority === 'Critical') ring.classList.add('border-status-critical');
+        else if (issue.priority === 'High') ring.classList.add('border-status-high');
+        else if (issue.priority === 'Medium') ring.classList.add('border-status-medium');
+        else ring.classList.add('border-status-resolved');
+
+        const pBadge = document.getElementById('priority-badge');
+        pBadge.innerText = issue.priority || 'Unknown';
+        pBadge.className = `px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${getBadgeClass(issue.priority)}`;
+
+        // Factors
+        const animateBar = (idVal, idBar, val) => {
+          const v = Math.min(100, Math.max(0, val || 0));
+          document.getElementById(idVal).innerText = `${v}%`;
+          setTimeout(() => {
+            document.getElementById(idBar).style.width = `${v}%`;
+          }, 300);
+        };
+
+        animateBar('val-image', 'bar-image', issue.image_confidence);
+        animateBar('val-text', 'bar-text', issue.text_urgency);
+        animateBar('val-loc', 'bar-loc', issue.location_importance);
+        
+        // Duplicate score from backend might be a raw numeric bonus/penalty or a %
+        // Assuming it's a numeric score up to 100 based on ai_engine.py
+        animateBar('val-dup', 'bar-dup', issue.duplicate_score);
+
+      }
+
+      // Gov Action update
+      const updateBtn = document.getElementById('btn-update-status');
+      if (updateBtn) {
+        updateBtn.addEventListener('click', async () => {
+          const newStatus = document.getElementById('gov-status-select').value;
+          updateBtn.disabled = true;
+          updateBtn.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>';
+          
+          try {
+            const response = await fetch(`http://127.0.0.1:5005/api/complaints/${targetId}`, {
+              method: 'PATCH',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({ status: newStatus })
+            });
+            
+            if (response.ok) {
+              if (window.showToast) window.showToast(`Issue status updated to ${newStatus}`, 'success');
+              else alert(`Success: Status updated to ${newStatus}`);
+              setTimeout(() => window.location.reload(), 1000);
+            } else {
+              throw new Error('Failed to update status');
+            }
+          } catch (err) {
+            console.error(err);
+            if (window.showToast) window.showToast('Error updating status', 'error');
+            else alert('Error updating status');
+          } finally {
+            updateBtn.disabled = false;
+            updateBtn.innerText = 'Update Status';
+          }
+        });
+      }
+
+    })();
+  </script>
+</body>
+</html>

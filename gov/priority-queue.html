@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Priority Queue - CivicAI</title>
+  <link rel="stylesheet" href="../src/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-surface text-navy h-screen flex font-sans antialiased overflow-hidden">
+  
+  <!-- Sidebar -->
+  <div id="sidebar-container" class="shrink-0 z-40 hidden md:block"></div>
+
+  <!-- Mobile Nav Toggle -->
+  <button id="mobile-menu-btn" class="md:hidden absolute top-4 left-4 z-50 bg-white p-2 rounded-lg shadow text-navy">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
+
+  <div id="mobile-sidebar" class="md:hidden fixed inset-0 z-40 bg-black/50 hidden transition-opacity">
+    <div id="mobile-sidebar-inner" class="w-64 h-full bg-white transform -translate-x-full transition-transform"></div>
+  </div>
+
+  <!-- Main Workspace -->
+  <main class="flex-grow flex flex-col h-full overflow-y-auto bg-slate-50 relative">
+    
+    <!-- Header -->
+    <header class="bg-white border-b border-surface-border px-6 md:px-10 py-5 flex flex-col md:flex-row justify-between md:items-center gap-4 sticky top-0 z-30 ml-12 md:ml-0 shadow-sm">
+      <div>
+        <h1 class="text-2xl font-black text-navy tracking-tight flex items-center gap-2">
+          <span class="material-symbols-outlined text-action">list_alt</span> AI Priority Queue
+        </h1>
+        <p class="text-sm text-slate-500 font-medium">All infrastructure complaints sorted by AI severity score.</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <button id="btn-refresh" class="btn-secondary px-4 py-2 flex items-center gap-2 text-sm shadow-sm bg-white">
+          <span class="material-symbols-outlined text-[18px]">refresh</span> Refresh
+        </button>
+      </div>
+    </header>
+
+    <div class="p-6 md:p-10 space-y-6 max-w-[1600px] mx-auto w-full">
+      
+      <!-- Filters -->
+      <div class="bg-white rounded-2xl border border-surface-border p-5 shadow-sm flex flex-col md:flex-row gap-4">
+        <div class="flex-1">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Search</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+            <input type="text" id="filter-search" class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-action focus:border-transparent outline-none" placeholder="Search ID or description...">
+          </div>
+        </div>
+        <div class="w-full md:w-48">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Priority</label>
+          <select id="filter-priority" class="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-action p-2 outline-none">
+            <option value="all">All Priorities</option>
+            <option value="Critical">Critical</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+        <div class="w-full md:w-48">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Status</label>
+          <select id="filter-status" class="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-action p-2 outline-none">
+            <option value="active">All Active</option>
+            <option value="open">Open</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="all">All Statuses</option>
+          </select>
+        </div>
+        <div class="w-full md:w-48">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Category</label>
+          <select id="filter-category" class="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-action p-2 outline-none">
+            <option value="all">All Categories</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="queue-loading" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-surface-border">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-action mb-4"></div>
+        <p class="text-slate-600 font-bold">Fetching latest queue data...</p>
+      </div>
+
+      <!-- Table -->
+      <div id="queue-content" class="bg-white rounded-2xl border border-surface-border shadow-sm overflow-hidden hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm whitespace-nowrap">
+            <thead class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b border-surface-border">
+              <tr>
+                <th class="px-6 py-4">Rank</th>
+                <th class="px-6 py-4">Complaint ID</th>
+                <th class="px-6 py-4">Category</th>
+                <th class="px-6 py-4">Severity Score</th>
+                <th class="px-6 py-4">Priority</th>
+                <th class="px-6 py-4">Status</th>
+                <th class="px-6 py-4">Date Reported</th>
+              </tr>
+            </thead>
+            <tbody id="queue-body" class="divide-y divide-surface-border">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+        <div id="queue-empty" class="hidden p-10 text-center text-slate-500">
+          No complaints found matching current filters.
+        </div>
+      </div>
+      
+    </div>
+  </main>
+
+  <script type="module" src="../src/js/main.js"></script>
+  <script type="module">
+    import { CATEGORIES } from '../src/js/ai-models.js';
+
+    (async function() {
+      
+      // 1. Auth & Sidebar setup
+      const token = localStorage.getItem('auth_token');
+      const role = localStorage.getItem('user_role');
+      
+      if (!token || (role !== 'admin' && role !== 'gov' && role !== 'government')) {
+        window.location.href = '../login.html';
+        return;
+      }
+
+      // Inject Sidebar
+      const sidebarHtml = window.Components.GovernmentSidebar('queue');
+      document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+      document.getElementById('mobile-sidebar-inner').innerHTML = sidebarHtml;
+
+      // Mobile menu
+      const mobBtn = document.getElementById('mobile-menu-btn');
+      const mobSidebar = document.getElementById('mobile-sidebar');
+      const mobInner = document.getElementById('mobile-sidebar-inner');
+      
+      mobBtn.addEventListener('click', () => {
+        mobSidebar.classList.remove('hidden');
+        setTimeout(() => {
+          mobSidebar.classList.remove('bg-black/0');
+          mobInner.classList.remove('-translate-x-full');
+        }, 10);
+      });
+      
+      mobSidebar.addEventListener('click', (e) => {
+        if (e.target === mobSidebar) {
+          mobInner.classList.add('-translate-x-full');
+          setTimeout(() => mobSidebar.classList.add('hidden'), 300);
+        }
+      });
+
+      // Populate category filter
+      const catSelect = document.getElementById('filter-category');
+      CATEGORIES.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.innerText = c.label;
+        catSelect.appendChild(opt);
+      });
+
+      // Data Management
+      let allComplaints = [];
+
+      const fetchData = async () => {
+        try {
+          const response = await fetch('http://127.0.0.1:5005/api/complaints', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          
+          if (!response.ok) throw new Error('API Error');
+          allComplaints = await response.json();
+          renderQueue();
+          
+        } catch (err) {
+          console.error(err);
+          document.getElementById('queue-loading').innerHTML = `
+            <div class="text-status-critical mb-2"><span class="material-symbols-outlined text-4xl">cloud_off</span></div>
+            <p class="text-navy font-bold">Failed to load queue data.</p>
+          `;
+        }
+      };
+
+      const getBadgeClass = (p) => {
+        if (p === 'Critical') return 'bg-status-critical/10 text-status-critical border border-status-critical/20';
+        if (p === 'High') return 'bg-status-high/10 text-status-high border border-status-high/20';
+        if (p === 'Medium') return 'bg-status-medium/10 text-status-medium border border-status-medium/20';
+        return 'bg-status-resolved/10 text-status-resolved border border-status-resolved/20';
+      };
+      
+      const getStatusBadge = (s) => {
+        const status = (s || 'open').toLowerCase();
+        if (status === 'resolved') return '<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-status-resolved/10 text-status-resolved border border-status-resolved/20">Resolved</span>';
+        if (status === 'in_progress' || status === 'in progress') return '<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-status-medium/10 text-status-medium border border-status-medium/20">In Progress</span>';
+        return '<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200">Open</span>';
+      };
+
+      const renderQueue = () => {
+        document.getElementById('queue-loading').classList.add('hidden');
+        document.getElementById('queue-content').classList.remove('hidden');
+
+        // Filters
+        const sPriority = document.getElementById('filter-priority').value;
+        const sStatus = document.getElementById('filter-status').value;
+        const sCat = document.getElementById('filter-category').value;
+        const sSearch = document.getElementById('filter-search').value.toLowerCase();
+
+        const filtered = allComplaints.filter(c => {
+          if (sPriority !== 'all' && c.priority !== sPriority) return false;
+          
+          const stat = (c.status || 'open').toLowerCase();
+          if (sStatus === 'active' && stat === 'resolved') return false;
+          if (sStatus !== 'all' && sStatus !== 'active') {
+             // Handle space vs underscore just in case
+             if (sStatus === 'in_progress' && (stat !== 'in_progress' && stat !== 'in progress')) return false;
+             if (sStatus !== 'in_progress' && stat !== sStatus) return false;
+          }
+
+          if (sCat !== 'all' && c.category_id !== sCat) return false;
+          
+          if (sSearch) {
+             const idMatch = c.id.toString().includes(sSearch);
+             const descMatch = (c.description || '').toLowerCase().includes(sSearch);
+             if (!idMatch && !descMatch) return false;
+          }
+          
+          return true;
+        });
+
+        // Sort by severity_score DESC
+        filtered.sort((a, b) => (b.severity_score || 0) - (a.severity_score || 0));
+
+        const tbody = document.getElementById('queue-body');
+        const emptyState = document.getElementById('queue-empty');
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = '';
+          emptyState.classList.remove('hidden');
+        } else {
+          emptyState.classList.add('hidden');
+          tbody.innerHTML = filtered.map((issue, index) => {
+            const catLabel = CATEGORIES.find(c => c.id === issue.category_id)?.label || issue.category_id;
+            const shortId = issue.id.toString().padStart(4, '0');
+            const date = new Date(issue.date_reported || issue.created_at);
+            const isDup = issue.is_duplicate ? '<span class="material-symbols-outlined text-[14px] text-status-high ml-1" title="Duplicate">file_copy</span>' : '';
+            
+            return `
+              <tr class="hover:bg-slate-50 transition-colors group cursor-pointer" onclick="window.location.href='../issue-detail.html?id=${issue.id}'">
+                <td class="px-6 py-4 border-none">
+                  <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 font-bold flex items-center justify-center text-xs">
+                    #${index + 1}
+                  </div>
+                </td>
+                <td class="px-6 py-4 border-none">
+                  <span class="font-mono text-sm font-bold text-slate-500 flex items-center">REP-${shortId} ${isDup}</span>
+                </td>
+                <td class="px-6 py-4 border-none">
+                  <div class="font-bold text-navy group-hover:text-action transition-colors">${catLabel}</div>
+                </td>
+                <td class="px-6 py-4 border-none">
+                  <div class="flex items-center gap-1 font-bold text-slate-700">
+                    <span class="material-symbols-outlined text-[18px] text-action">local_fire_department</span>
+                    <span class="text-lg">${issue.severity_score || 0}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 border-none">
+                  <span class="px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider ${getBadgeClass(issue.priority)}">
+                    ${issue.priority || 'Unknown'}
+                  </span>
+                </td>
+                <td class="px-6 py-4 border-none">
+                  ${getStatusBadge(issue.status)}
+                </td>
+                <td class="px-6 py-4 border-none text-slate-500 text-sm">
+                  ${isNaN(date) ? 'Unknown' : date.toLocaleDateString()}
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      };
+
+      // Events
+      document.getElementById('btn-refresh').addEventListener('click', () => {
+        document.getElementById('queue-content').classList.add('hidden');
+        document.getElementById('queue-loading').classList.remove('hidden');
+        fetchData();
+      });
+
+      ['filter-priority', 'filter-status', 'filter-category', 'filter-search'].forEach(id => {
+        document.getElementById(id).addEventListener(id === 'filter-search' ? 'input' : 'change', renderQueue);
+      });
+
+      // Init
+      fetchData();
+    })();
+  </script>
+</body>
+</html>

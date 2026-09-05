@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CivicAI - Settings &amp; Notifications</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#4e5f7d",
+                        "tertiary-fixed": "#e0e3e5",
+                        "surface-container-low": "#eff4ff",
+                        "surface-bright": "#f8f9ff",
+                        "background": "#f8f9ff",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-tertiary-fixed": "#191c1e",
+                        "surface-container": "#e5eeff",
+                        "on-surface": "#0b1c30",
+                        "primary-fixed": "#d6e3ff",
+                        "secondary-container": "#316bf3",
+                        "on-primary-fixed-variant": "#374765",
+                        "on-primary-container": "#8293b4",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "tertiary": "#131718",
+                        "inverse-primary": "#b6c7ea",
+                        "secondary-fixed": "#dbe1ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "on-tertiary-container": "#8f9294",
+                        "primary": "#031631",
+                        "on-secondary-fixed": "#00174b",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#282b2d",
+                        "on-secondary-container": "#fefcff",
+                        "on-primary-fixed": "#081b37",
+                        "on-background": "#0b1c30",
+                        "outline-variant": "#c5c6ce",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#44474d",
+                        "surface": "#f8f9ff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "primary-container": "#1a2b47",
+                        "surface-variant": "#d3e4fe",
+                        "secondary": "#0051d5",
+                        "inverse-surface": "#213145",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "outline": "#75777e",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#cbdbf5",
+                        "tertiary-fixed-dim": "#c4c7c9",
+                        "on-secondary-fixed-variant": "#003ea8",
+                        "primary-fixed-dim": "#b6c7ea"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "sm": "8px",
+                        "xl": "32px",
+                        "gutter": "24px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "container-max": "1200px",
+                        "unit": "4px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    },
+                    "boxShadow": {
+                        "card-hover": "0px 4px 20px rgba(26, 43, 71, 0.08)",
+                        "overlay": "0px 10px 30px rgba(26, 43, 71, 0.12)"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9ff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-fill { font-variation-settings: 'FILL' 1; }
+        .soft-shadow { box-shadow: 0px 4px 20px rgba(26, 43, 71, 0.04); }
+        .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .hover-lift:hover { transform: translateY(-2px); box-shadow: 0px 4px 20px rgba(26, 43, 71, 0.08); }
+        
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: #c5c6ce; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-background flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full w-64 fixed left-0 top-0 bg-surface-container-lowest dark:bg-surface-container shadow-md border-r border-outline-variant p-md z-40 flex-shrink-0">
+<!-- Header -->
+<div class="flex items-center gap-3 mb-xl pt-sm px-2">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined icon-fill">apartment</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary dark:text-primary-fixed tracking-tight">CivicAI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Infrastructure Mgt</p>
+</div>
+</div>
+<!-- CTA -->
+<button class="w-full bg-secondary text-on-secondary font-label-md text-label-md py-3 rounded-lg mb-8 hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-sm scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined icon-fill text-[18px]">add</span>
+            New Report
+        </button>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-2 flex-grow">
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">list_alt</span>
+<span class="font-label-md text-label-md">Issue Queue</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined icon-fill">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+<!-- Footer Links -->
+<div class="mt-auto pt-4 border-t border-outline-variant/30">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col md:ml-64 w-full h-full overflow-hidden">
+<!-- TopNavBar (Mobile Appears, Desktop Contextual) -->
+<header class="w-full sticky top-0 bg-surface-container-lowest dark:bg-surface-container-low shadow-sm border-b border-outline-variant flex justify-between items-center px-gutter h-16 z-30 shrink-0">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<!-- Brand Mobile Only -->
+<h2 class="md:hidden font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">CivicAI</h2>
+<!-- Page Title Desktop -->
+<h2 class="hidden md:block font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Account &amp; Settings</h2>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-secondary dark:text-secondary-fixed bg-surface-container-high hover:opacity-80 transition-opacity active:scale-95">
+<span class="material-symbols-outlined icon-fill">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-surface-container-lowest"></span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors active:scale-95 ml-2">
+<img class="w-8 h-8 rounded-full object-cover border border-outline-variant/50" data-alt="Professional headshot of a senior administrator in their 40s, looking approachable yet authoritative. Soft, flat lighting characteristic of modern corporate portraits, against a neutral white background. Crisp focus, high resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJ5DDnxSAFblaDb3yFc0tWRDSQZ9YF_RnjWwTKvfW0m8ALvUQk1l7r4R1v34AhhYB2sauZgf036t0BXP64Pkz5sBoJc8_Ot0901bqy7Sg3t-Eo-oWzyjJNcxkvJ2m8GIiczT7B-ovYr6sHChQ0zazSwcyu1bvK4CbpKdYAUUUYVEC5UyWVR3m5cUz1xUGQOJNWXfqBmSBY0GO5t8PeFZ_izSB-OK7ogZTKBmv9cVlKWjHLtInBbn5G"/>
+</button>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<main class="flex-1 overflow-y-auto p-4 md:p-8 lg:p-gutter lg:py-xl scroll-smooth">
+<div class="max-w-container-max mx-auto h-full flex flex-col gap-xl">
+<!-- Page Header / Tabs -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
+<div>
+<h2 class="font-display-lg text-display-lg md:text-[36px] md:leading-[44px] text-primary mb-1 tracking-tight">Vikram Singh</h2>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">badge</span>
+                            Senior Administrator • Ward 12
+                        </p>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- Left Column: Notifications (Focus Area) -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/50 soft-shadow overflow-hidden flex flex-col h-full">
+<div class="px-6 py-5 border-b border-outline-variant/30 flex justify-between items-center bg-surface/50">
+<h3 class="font-headline-md text-[20px] leading-[28px] text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">inbox</span>
+                                    Notifications Hub
+                                </h3>
+<button class="font-label-sm text-label-sm text-secondary hover:underline">Mark all as read</button>
+</div>
+<div class="flex-1 overflow-y-auto max-h-[600px] p-2 flex flex-col gap-2">
+<!-- Critical Alerts Header -->
+<div class="px-4 py-2 mt-2 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Requires Attention</div>
+<!-- Notification Item: Critical -->
+<div class="group flex gap-4 p-4 rounded-lg bg-error-container/20 border border-error-container hover:bg-error-container/30 transition-colors cursor-pointer relative">
+<div class="w-10 h-10 rounded-full bg-error-container text-on-error-container flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined icon-fill text-[20px]">warning</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-label-md text-label-md text-on-surface font-semibold">Critical Infrastructure Issue Detected</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant shrink-0 ml-2">10m ago</span>
+</div>
+<p class="font-body-md text-[14px] leading-5 text-on-surface-variant mb-2">Major water main break reported in Ward 12. Immediate routing required.</p>
+<div class="flex gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-error/10 text-error border border-error/20">Urgent</span>
+</div>
+</div>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container-highest"><span class="material-symbols-outlined text-[20px]">chevron_right</span></button>
+</div>
+</div>
+<!-- Notification Item: Warning -->
+<div class="group flex gap-4 p-4 rounded-lg bg-[#fff8e6] border border-[#fde68a] hover:bg-[#ffedc5] transition-colors cursor-pointer relative">
+<div class="w-10 h-10 rounded-full bg-[#fef3c7] text-[#92400e] flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-label-md text-label-md text-on-surface font-semibold">SLA Breach Approaching</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant shrink-0 ml-2">1h ago</span>
+</div>
+<p class="font-body-md text-[14px] leading-5 text-on-surface-variant mb-2">Ticket CIV-8821 (Pothole Repair) is 4 hours away from breaching 48h SLA.</p>
+<div class="flex gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-orange-100 text-orange-800 border border-orange-200">Warning</span>
+</div>
+</div>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container-highest"><span class="material-symbols-outlined text-[20px]">chevron_right</span></button>
+</div>
+</div>
+<!-- Issue Updates Header -->
+<div class="px-4 py-2 mt-4 border-t border-outline-variant/30 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider pt-6">Issue Updates</div>
+<!-- Notification Item: Update -->
+<div class="group flex gap-4 p-4 rounded-lg hover:bg-surface-container transition-colors cursor-pointer relative">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-primary flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-[20px]">assignment_ind</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-label-md text-label-md text-on-surface font-medium">Assignment Update</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant shrink-0 ml-2">Yesterday</span>
+</div>
+<p class="font-body-md text-[14px] leading-5 text-on-surface-variant">Complaint CIV-10293 assigned to Road Department queue.</p>
+</div>
+</div>
+<!-- Notification Item: Resolved -->
+<div class="group flex gap-4 p-4 rounded-lg hover:bg-surface-container transition-colors cursor-pointer relative">
+<div class="w-10 h-10 rounded-full bg-[#dcfce7] text-[#166534] flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-[20px] icon-fill">check_circle</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-label-md text-label-md text-on-surface font-medium">Report Resolved</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant shrink-0 ml-2">Tue, 2:30 PM</span>
+</div>
+<p class="font-body-md text-[14px] leading-5 text-on-surface-variant">Your reported streetlight outage on 5th Ave has been resolved.</p>
+</div>
+</div>
+<!-- System Notifications Header -->
+<div class="px-4 py-2 mt-4 border-t border-outline-variant/30 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider pt-6">System &amp; Maintenance</div>
+<!-- Notification Item: System -->
+<div class="group flex gap-4 p-4 rounded-lg hover:bg-surface-container transition-colors cursor-pointer relative opacity-70">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-label-md text-label-md text-on-surface font-medium">System Maintenance Scheduled</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant shrink-0 ml-2">Oct 12</span>
+</div>
+<p class="font-body-md text-[14px] leading-5 text-on-surface-variant">CivicAI portal will be offline for updates Sunday 2AM-4AM.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Profile & Settings Grid -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<!-- Profile Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/50 p-6 soft-shadow flex flex-col gap-6">
+<h3 class="font-headline-md text-[20px] leading-[28px] text-primary flex items-center gap-2 border-b border-outline-variant/30 pb-4">
+<span class="material-symbols-outlined text-secondary">manage_accounts</span>
+                                Profile Details
+                            </h3>
+<div class="flex items-center gap-5">
+<div class="relative">
+<img class="w-20 h-20 rounded-full object-cover border-2 border-surface-container-high" data-alt="Close up professional headshot of an administrator. Clean bright corporate lighting, white background. Wearing a smart navy blazer." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9YNeWOez0lHO-xbvSK5EQS6cNKdse0L37CPcJ2Rr4OC0xC1x9PjBZVJ_HFQBT3MldDmB4eADA6uxM2Ix5Zz4DAVU93zNaMViwk1uR8-kN63KhGXBm7KEpezaS7efrmd7fSgjJwnc0pOdoNaKy8OmFb3vIqXVf_tjVTO-Uwh7yYPyDvjmVYoHMMenC3AA484rX0qml8PJUUvzemM5sPfg1kfTmRBCgVzaRH5XPLs-gssqfxyffC6o7"/>
+<button class="absolute bottom-0 right-0 w-7 h-7 bg-surface-container-lowest border border-outline-variant rounded-full flex items-center justify-center text-on-surface-variant hover:text-secondary shadow-sm">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+</button>
+</div>
+<div class="flex-1">
+<div class="mb-3">
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Full Name</label>
+<input class="w-full bg-surface border-1.5 border-outline-variant rounded-md px-3 py-2 text-body-md text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-colors" readonly="" type="text" value="Vikram Singh"/>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Email Address</label>
+<input class="w-full bg-surface border-1.5 border-outline-variant rounded-md px-3 py-2 text-body-md text-on-surface-variant opacity-70 cursor-not-allowed" disabled="" type="email" value="v.singh@civic.gov"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Location / Jurisdiction</label>
+<select class="w-full bg-surface-container-lowest border-1.5 border-outline-variant rounded-md px-3 py-2 text-body-md text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary outline-none appearance-none cursor-pointer">
+<option>Ward 12 (North District)</option>
+<option>Ward 13 (North District)</option>
+<option>Central Command</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Preferences & Security (Accordion/List style) -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/50 soft-shadow overflow-hidden">
+<!-- Section: Preferences -->
+<div class="p-5 border-b border-outline-variant/30 hover:bg-surface/50 transition-colors">
+<div class="flex justify-between items-center mb-4">
+<h4 class="font-label-md text-[16px] text-primary font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">tune</span>
+                                        App Preferences
+                                    </h4>
+</div>
+<div class="flex flex-col gap-4 pl-7">
+<div class="flex justify-between items-center">
+<label class="font-body-md text-[14px] text-on-surface-variant">System Language</label>
+<select class="bg-transparent border border-outline-variant rounded px-2 py-1 text-[13px] text-on-surface cursor-pointer">
+<option>English (US)</option>
+<option>Hindi</option>
+<option>Spanish</option>
+</select>
+</div>
+<div class="flex justify-between items-center">
+<label class="font-body-md text-[14px] text-on-surface-variant">High Contrast Mode</label>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Section: Notifications -->
+<div class="p-5 border-b border-outline-variant/30 hover:bg-surface/50 transition-colors">
+<div class="flex justify-between items-center mb-4">
+<h4 class="font-label-md text-[16px] text-primary font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">notifications_active</span>
+                                        Alert Routing
+                                    </h4>
+</div>
+<div class="flex flex-col gap-4 pl-7">
+<div class="flex justify-between items-center">
+<label class="font-body-md text-[14px] text-on-surface-variant">Email Summaries</label>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div class="flex justify-between items-center">
+<label class="font-body-md text-[14px] text-on-surface-variant">SMS Critical Alerts</label>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Section: Security -->
+<div class="p-5 hover:bg-surface/50 transition-colors">
+<div class="flex justify-between items-center">
+<h4 class="font-label-md text-[16px] text-primary font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">lock</span>
+                                        Security
+                                    </h4>
+</div>
+<div class="mt-4 pl-7 flex flex-col gap-3">
+<button class="text-left font-body-md text-[14px] text-secondary hover:underline py-1">Change Password</button>
+<button class="text-left font-body-md text-[14px] text-secondary hover:underline py-1">Two-Factor Authentication (Active)</button>
+</div>
+</div>
+</div>
+<div class="flex justify-end gap-3 mt-2">
+<button class="px-5 py-2 font-label-md text-label-md text-primary bg-surface-container-lowest border border-outline-variant rounded-md hover:bg-surface-container transition-colors">Cancel</button>
+<button class="px-5 py-2 font-label-md text-label-md text-on-secondary bg-secondary rounded-md hover:opacity-90 transition-opacity shadow-sm">Save Changes</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
