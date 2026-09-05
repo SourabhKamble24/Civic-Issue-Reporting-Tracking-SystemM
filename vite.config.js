@@ -6,6 +6,14 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:5005',
+        changeOrigin: true,
+      }
+    }
+  },
   build: {
     rollupOptions: {
       input: {
