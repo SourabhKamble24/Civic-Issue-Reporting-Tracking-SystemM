@@ -201,7 +201,7 @@
       
       try {
         // Try fetching real API data
-        const res = await fetch('http://127.0.0.1:5005/api/complaints');
+        const res = await fetch('/api/complaints');
         if (!res.ok) throw new Error('API Error');
         const complaints = await res.json();
         

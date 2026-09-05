@@ -339,7 +339,7 @@
 
       // Load Data
       try {
-        const response = await fetch('http://127.0.0.1:5005/api/complaints');
+        const response = await fetch('/api/complaints');
         if (!response.ok) throw new Error('Network error');
         window.allComplaints = await response.json();
         document.getElementById('map-loading').classList.add('hidden');

@@ -242,7 +242,7 @@
       try {
         // We pass token if we have it, although API might be public for reading
         const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-        const response = await fetch('http://127.0.0.1:5005/api/complaints', { headers });
+        const response = await fetch('/api/complaints', { headers });
         if (!response.ok) throw new Error("Failed to fetch complaints");
         
         const complaints = await response.json();
@@ -384,7 +384,7 @@
           updateBtn.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>';
           
           try {
-            const response = await fetch(`http://127.0.0.1:5005/api/complaints/${targetId}`, {
+            const response = await fetch(`/api/complaints/${targetId}`, {
               method: 'PATCH',
               headers: { 
                 'Content-Type': 'application/json',

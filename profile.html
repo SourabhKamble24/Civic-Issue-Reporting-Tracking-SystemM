@@ -204,7 +204,7 @@
 
       // Fetch Notifications (Complaint Updates)
       try {
-        const response = await fetch('http://127.0.0.1:5005/api/complaints', {
+        const response = await fetch('/api/complaints', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
